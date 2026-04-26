@@ -1,0 +1,86 @@
+name: Export Web (Godot)
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  GODOT_VERSION: "4.5"
+  GODOT_RELEASE: "stable"
+  EXPORT_PRESET: "Web"
+  EXPORT_PATH: "build/web/index.html"
+  DEPLOY_BRANCH: "cf-pages"
+
+jobs:
+  export-web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Godot and templates
+        shell: bash
+        run: |
+          set -euo pipefail
+          GODOT_TAG="${GODOT_VERSION}-${GODOT_RELEASE}"
+          GODOT_ZIP="Godot_v${GODOT_TAG}_linux.x86_64.zip"
+          TEMPLATES_TPZ="Godot_v${GODOT_TAG}_export_templates.tpz"
+
+          curl -fsSL -o godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_TAG}/${GODOT_ZIP}"
+          curl -fsSL -o templates.tpz "https://github.com/godotengine/godot/releases/download/${GODOT_TAG}/${TEMPLATES_TPZ}"
+
+          unzip -q godot.zip -d .godot_bin
+          GODOT_BIN="$(find .godot_bin -maxdepth 1 -type f -name 'Godot_v*linux.x86_64' | head -n 1)"
+          chmod +x "$GODOT_BIN"
+          echo "GODOT_BIN=$GODOT_BIN" >> "$GITHUB_ENV"
+
+          unzip -q templates.tpz -d .godot_templates_unpack
+          TEMPLATES_DIR="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.${GODOT_RELEASE}"
+          mkdir -p "$TEMPLATES_DIR"
+          cp -a .godot_templates_unpack/templates/. "$TEMPLATES_DIR/"
+
+      - name: Export
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/web
+          "$GODOT_BIN" --headless --path . --export-release "$EXPORT_PRESET" "$EXPORT_PATH"
+
+      - name: Add Cloudflare Pages headers
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > build/web/_headers <<'EOF'
+/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+
+/*.wasm
+  Content-Type: application/wasm
+          EOF
+
+      - name: Deploy build to branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/web-build
+          cp -a build/web/. /tmp/web-build/
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git switch --orphan "$DEPLOY_BRANCH"
+          git rm -rf . >/dev/null 2>&1 || true
+          cp -a /tmp/web-build/. .
+          touch .nojekyll
+          git add -A
+
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+
+          git commit -m "Deploy web build"
+          git push -f origin "$DEPLOY_BRANCH"
