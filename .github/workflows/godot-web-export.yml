@@ -9,6 +9,7 @@ permissions:
   contents: write
 
 env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
   GODOT_VERSION: "4.5"
   GODOT_RELEASE: "stable"
   EXPORT_PRESET: "Web"
@@ -33,7 +34,8 @@ jobs:
           curl -fsSL -o templates.tpz "https://github.com/godotengine/godot/releases/download/${GODOT_TAG}/${TEMPLATES_TPZ}"
 
           unzip -q godot.zip -d .godot_bin
-          GODOT_BIN="$(find .godot_bin -maxdepth 1 -type f -name 'Godot_v*linux.x86_64' | head -n 1)"
+          GODOT_BIN="$(find .godot_bin -maxdepth 1 -type f \( -name 'Godot_v*linux.x86_64' -o -name 'Godot_v*linux.x86_64.*' \) | head -n 1)"
+          test -n "$GODOT_BIN"
           chmod +x "$GODOT_BIN"
           echo "GODOT_BIN=$GODOT_BIN" >> "$GITHUB_ENV"
 
@@ -41,6 +43,12 @@ jobs:
           TEMPLATES_DIR="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.${GODOT_RELEASE}"
           mkdir -p "$TEMPLATES_DIR"
           cp -a .godot_templates_unpack/templates/. "$TEMPLATES_DIR/"
+
+      - name: Import assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$GODOT_BIN" --headless --path . --import
 
       - name: Export
         shell: bash
@@ -53,14 +61,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cat > build/web/_headers <<'EOF'
-          /*
-            Cross-Origin-Opener-Policy: same-origin
-            Cross-Origin-Embedder-Policy: require-corp
-
-          /*.wasm
-            Content-Type: application/wasm
-          EOF
+          printf "%s" $'/*\n  Cross-Origin-Opener-Policy: same-origin\n  Cross-Origin-Embedder-Policy: require-corp\n\n/*.wasm\n  Content-Type: application/wasm\n' > build/web/_headers
 
       - name: Deploy build to branch
         shell: bash
