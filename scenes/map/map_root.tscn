@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[node name="MapController" type="Node"]
+
+[node name="MapGenerator" type="Node" parent="."]
+[node name="NodeRouter" type="Node" parent="."]
+[node name="PostBattleHandler" type="Node" parent="."]

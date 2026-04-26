@@ -1,0 +1,32 @@
+{
+  "enemies": [
+    {
+      "id": "dummy",
+      "name": "dummy",
+      "icon": "res://icon.svg",
+      "anim_module": "",
+      "max_hp": 50,
+      "script": "res://scripts/enemies/dummy.gd",
+      "random_pool": "小怪（弱）",
+      "weight": 1
+    },
+    {
+      "id": "dummy_strong",
+      "name": "dummy strong",
+      "icon": "res://icon.svg",
+      "anim_module": "",
+      "max_hp": 75,
+      "script": "res://scripts/enemies/dummy_strong.gd",
+      "random_pool": "小怪（强）",
+      "weight": 1
+    },
+    {
+      "id": "dummy_boss",
+      "name": "dummy boss",
+      "icon": "res://icon.svg",
+      "anim_module": "",
+      "max_hp": 100,
+      "script": "res://scripts/enemies/dummy_boss.gd"
+    }
+  ]
+}

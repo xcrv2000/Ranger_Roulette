@@ -1,0 +1,36 @@
+{
+  "events": [
+    {
+      "id": "ammo_recycler",
+      "name": "弹药回收商",
+      "random_pool": "B类事件",
+      "text1": "一个裹着斗篷的人拦住你。\n他低声说：\"子弹太多会拖慢你。\"",
+      "text2": "回收商收下了你的子弹，给了你一个意味不明的眼神。\n你继续上路。",
+      "options": [
+        { "id": "delete_bullet", "text": "删除一个子弹" }
+      ]
+    },
+    {
+      "id": "exam_dummy",
+      "name": "考核假人",
+      "random_pool": "B类事件",
+      "text1": "一尊考核假人立在路边。\n你可以开火测试，或者当作没看见。",
+      "text2": "你拍了拍枪套，继续上路。",
+      "options": [
+        { "id": "roll_test", "text": "进行一次考核" },
+        { "id": "take_gold", "text": "拿走5金币" }
+      ]
+    },
+    {
+      "id": "gift",
+      "name": "赠品",
+      "random_pool": "B类事件",
+      "text1": "路边摆着一个写着“赠品”的小箱子。\n里面似乎有一枚子弹。",
+      "text2": "你把箱子盖好，继续上路。",
+      "options": [
+        { "id": "take", "text": "获得" },
+        { "id": "skip", "text": "跳过" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,440 @@
+{
+	"cards":  [
+				  {
+					  "id":  "gunslinger_01",
+					  "name":  "抵进射击",
+					  "text":  "前进1。\n如果处于第1-3格，造成9点伤害。\n如果处于第4-6格，造成13点伤害。\n如果处于第7格，造成17点伤害。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "blue",
+					  "script":  "res://scripts/cards/gunslinger_01.gd"
+				  },
+				  {
+					  "id":  "gunslinger_02",
+					  "name":  "冲刺射击",
+					  "text":  "前进2。\n造成9点伤害。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "white",
+					  "script":  "res://scripts/cards/gunslinger_02.gd"
+				  },
+				  {
+					  "id":  "gunslinger_03",
+					  "name":  "滑步射击",
+					  "text":  "前进1。\n造成6点伤害两次。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "blue",
+					  "script":  "res://scripts/cards/gunslinger_03.gd"
+				  },
+				  {
+					  "id":  "gunslinger_04",
+					  "name":  "精确射击",
+					  "text":  "只能放在最后一个弹匣。\n造成12点伤害。\n如果这是你本回合打出的第一张攻击，改为造成36点伤害。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "blue",
+					  "constraints":  {
+										"wheel":  "last"
+									  },
+					  "script":  "res://scripts/cards/gunslinger_04.gd"
+				  },
+				  {
+					  "id":  "gunslinger_05",
+					  "name":  "蓄势射击",
+					  "text":  "造成和自己的格挡相等的伤害。\n如果这是你本回合打出的第一张攻击，造成翻倍的伤害。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "blue",
+					  "script":  "res://scripts/cards/gunslinger_05.gd"
+				  },
+				  {
+					  "id":  "gunslinger_06",
+					  "name":  "躁动",
+					  "text":  "游走2。\n造成9点伤害。\n游走1。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "white",
+					  "script":  "res://scripts/cards/gunslinger_06.gd"
+				  },
+				  {
+					  "id":  "gunslinger_07",
+					  "name":  "走火-过量装药",
+					  "text":  "游走1。\n对自己造成3点伤害。\n造成13点伤害。\n额外对前方3个格子的所有单位造成5点伤害。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "white",
+					  "script":  "res://scripts/cards/gunslinger_07.gd"
+				  },
+				  {
+					  "id":  "gunslinger_08",
+					  "name":  "走火-待击保管",
+					  "text":  "游走1。\n对自己造成3点伤害。\n造成9点伤害。\n下回合开始时，造成9点伤害。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "white",
+					  "script":  "res://scripts/cards/gunslinger_08.gd"
+				  },
+				  {
+					  "id":  "gunslinger_09",
+					  "name":  "走火-弹药自燃",
+					  "text":  "游走1。\n对自己造成3点伤害。\n对随机敌人造成4点伤害3次。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "white",
+					  "script":  "res://scripts/cards/gunslinger_09.gd"
+				  },
+				  {
+					  "id":  "gunslinger_10",
+					  "name":  "走火-私改弹匣",
+					  "text":  "游走1。\n对自己造成3点伤害。\n造成该弹匣子弹数量两倍的伤害。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "white",
+					  "script":  "res://scripts/cards/gunslinger_10.gd"
+				  },
+				  {
+					  "id":  "gunslinger_11",
+					  "name":  "走火-松动扳机",
+					  "text":  "游走1。\n对自己造成3点伤害。\n随机打出一枚该弹匣中的子弹。\n随机打出另一枚该弹匣中的子弹。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "white",
+					  "script":  "res://scripts/cards/gunslinger_11.gd"
+				  },
+				  {
+					  "id":  "gunslinger_12",
+					  "name":  "走火-枪口乱飘",
+					  "text":  "游走1。\n对自己造成3点伤害。\n造成9点伤害，随机打出一枚该弹匣中的子弹。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "white",
+					  "script":  "res://scripts/cards/gunslinger_12.gd"
+				  },
+				  {
+					  "id":  "gunslinger_13",
+					  "name":  "走火-上膛跌落",
+					  "text":  "游走1。\n对自己造成3点伤害。\n随机打出一枚其它弹匣中的子弹。\n对每个其它的弹匣重复此效果。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "white",
+					  "script":  "res://scripts/cards/gunslinger_13.gd"
+				  },
+				  {
+					  "id":  "gunslinger_14",
+					  "name":  "走火-违规清理",
+					  "text":  "【消耗】\n游走1。\n对自己造成3点伤害。\n随机打出一枚已消耗的子弹。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "blue",
+					  "script":  "res://scripts/cards/gunslinger_14.gd"
+				  },
+				  {
+					  "id":  "gunslinger_15",
+					  "name":  "金色子弹",
+					  "text":  "前进1。\n对所有敌人造成17点伤害。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "gold",
+					  "script":  "res://scripts/cards/gunslinger_15.gd"
+				  },
+				  {
+					  "id":  "gunslinger_16",
+					  "name":  "黄色子弹",
+					  "text":  "【消耗】\n前进1。\n造成17点伤害。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "white",
+					  "script":  "res://scripts/cards/gunslinger_16.gd"
+				  },
+				  {
+					  "id":  "gunslinger_17",
+					  "name":  "戕害",
+					  "text":  "前进1。\n造成7点伤害。\n【补射】再发动一次该子弹。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "white",
+					  "script":  "res://scripts/cards/gunslinger_17.gd"
+				  },
+				  {
+					  "id":  "gunslinger_18",
+					  "name":  "压制射击",
+					  "text":  "造成10点伤害。\n获得5点格挡。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "white",
+					  "script":  "res://scripts/cards/gunslinger_18.gd"
+				  },
+				  {
+					  "id":  "gunslinger_19",
+					  "name":  "死亡舞步",
+					  "text":  "【消耗】\n本场战斗中每次前进时，造成4点伤害。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "gold",
+					  "script":  "res://scripts/cards/gunslinger_19.gd"
+				  },
+				  {
+					  "id":  "gunslinger_20",
+					  "name":  "滑铲",
+					  "text":  "前进3。\n造成本回合前进距离3倍的伤害。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "white",
+					  "script":  "res://scripts/cards/gunslinger_20.gd"
+				  },
+				  {
+					  "id":  "gunslinger_21",
+					  "name":  "英勇冲锋",
+					  "text":  "本回合每向前移动1格，获得3点临时力量。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "blue",
+					  "script":  "res://scripts/cards/gunslinger_21.gd"
+				  },
+				  {
+					  "id":  "gunslinger_22",
+					  "name":  "火力侦察",
+					  "text":  "前进1。\n造成3点伤害3次。\n该子弹每造成1次没有被格挡的伤害，获得6点格挡。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "blue",
+					  "script":  "res://scripts/cards/gunslinger_22.gd"
+				  },
+				  {
+					  "id":  "gunslinger_23",
+					  "name":  "赏金",
+					  "text":  "前进1。\n获得8点格挡。\n【补射】获得6金币。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "white",
+					  "script":  "res://scripts/cards/gunslinger_23.gd"
+				  },
+				  {
+					  "id":  "gunslinger_24",
+					  "name":  "经验",
+					  "text":  "后退1。\n获得8点格挡。\n【补射】胜利后，额外获得一组可选的子弹奖励。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "white",
+					  "script":  "res://scripts/cards/gunslinger_24.gd"
+				  },
+				  {
+					  "id":  "gunslinger_25",
+					  "name":  "反思",
+					  "text":  "后退1。\n获得8点格挡。\n【补射】胜利后，可以从所在弹匣选择一枚子弹移除。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "white",
+					  "script":  "res://scripts/cards/gunslinger_25.gd"
+				  },
+				  {
+					  "id":  "gunslinger_26",
+					  "name":  "警惕",
+					  "text":  "后退1。\n获得12点格挡。\n【补射】下一场战斗开始时，获得16点格挡。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "blue",
+					  "script":  "res://scripts/cards/gunslinger_26.gd"
+				  },
+				  {
+					  "id":  "gunslinger_27",
+					  "name":  "快速拔枪",
+					  "text":  "后退1，获得8点格挡。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "white",
+					  "script":  "res://scripts/cards/gunslinger_27.gd"
+				  },
+				  {
+					  "id":  "gunslinger_28",
+					  "name":  "回避",
+					  "text":  "获得8点格挡。\n如果处于1-3，前进3。\n否则，后退3。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "blue",
+					  "script":  "res://scripts/cards/gunslinger_28.gd"
+				  },
+				  {
+					  "id":  "gunslinger_29",
+					  "name":  "走火-发烟火药",
+					  "text":  "传送到第1格。\n对自己造成3点伤害。\n获得20点格挡。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "gold",
+					  "script":  "res://scripts/cards/gunslinger_29.gd"
+				  },
+				  {
+					  "id":  "gunslinger_30",
+					  "name":  "自卫反射",
+					  "text":  "后退1。\n获得11点格挡。\n本回合下次受到敌人的伤害时，对那个敌人造成6点伤害。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "blue",
+					  "script":  "res://scripts/cards/gunslinger_30.gd"
+				  },
+				  {
+					  "id":  "gunslinger_31",
+					  "name":  "转枪",
+					  "text":  "游走1。\n获得8点格挡。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "white",
+					  "script":  "res://scripts/cards/gunslinger_31.gd"
+				  },
+				  {
+					  "id":  "gunslinger_32",
+					  "name":  "屏息",
+					  "text":  "【消耗】\n获得13点格挡。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "blue",
+					  "script":  "res://scripts/cards/gunslinger_32.gd"
+				  },
+				  {
+					  "id":  "gunslinger_33",
+					  "name":  "凝神",
+					  "text":  "获得7点格挡。\n本回合下次攻击发动两次。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "blue",
+					  "script":  "res://scripts/cards/gunslinger_33.gd"
+				  },
+				  {
+					  "id":  "gunslinger_34",
+					  "name":  "示警",
+					  "text":  "敌人本回合的攻击减半（向下取整）。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "white",
+					  "script":  "res://scripts/cards/gunslinger_34.gd"
+				  },
+				  {
+					  "id":  "gunslinger_35",
+					  "name":  "掩蔽",
+					  "text":  "后退1。\n获得8点格挡。\n下回合开始时，获得6点格挡。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "white",
+					  "script":  "res://scripts/cards/gunslinger_35.gd"
+				  },
+				  {
+					  "id":  "gunslinger_36",
+					  "name":  "假目标",
+					  "text":  "【消耗】\n下次受到的攻击变为0。\n失去你的帽子（将立绘更新为没有帽子的版本）。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "white",
+					  "script":  "res://scripts/cards/gunslinger_36.gd"
+				  },
+				  {
+					  "id":  "gunslinger_37",
+					  "name":  "绝望舞步",
+					  "text":  "【消耗】\n本场战斗中每次后退时，获得3点格挡。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "漫游枪手",
+					  "rarity":  "gold",
+					  "script":  "res://scripts/cards/gunslinger_37.gd"
+				  },
+				  {
+					  "id":  "attack",
+					  "name":  "攻击",
+					  "text":  "造成6点伤害。\n前进1。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "测试",
+					  "script":  "res://scripts/cards/attack.gd"
+				  },
+				  {
+					  "id":  "defend",
+					  "name":  "防御",
+					  "text":  "获得5点格挡。\n后退1。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "测试",
+					  "script":  "res://scripts/cards/defend.gd"
+				  },
+				  {
+					  "id":  "attack",
+					  "name":  "攻击",
+					  "text":  "【测试】\n造成6伤害，前进1。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "测试",
+					  "script":  "res://scripts/cards/attack.gd"
+				  },
+				  {
+					  "id":  "defend",
+					  "name":  "防御",
+					  "text":  "【测试】\n获得5格挡，后退1。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "测试",
+					  "script":  "res://scripts/cards/defend.gd"
+				  },
+				  {
+					  "id":  "test1",
+					  "name":  "测试1",
+					  "text":  "【测试】\n前进1。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "测试",
+					  "script":  "res://scripts/cards/test1.gd"
+				  },
+				  {
+					  "id":  "test2",
+					  "name":  "测试2",
+					  "text":  "【测试】\n前进2。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "测试",
+					  "script":  "res://scripts/cards/test2.gd"
+				  },
+				  {
+					  "id":  "test3",
+					  "name":  "测试3",
+					  "text":  "【测试】\n无效果。",
+					  "icon":  "res://icon.svg",
+					  "anim_module":  "",
+					  "random_pool":  "测试",
+					  "script":  "res://scripts/cards/test3.gd"
+				  }
+			  ]
+}

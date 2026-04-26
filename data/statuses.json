@@ -1,0 +1,100 @@
+{
+  "statuses": [
+    {
+      "id": "strength",
+      "name": "力量",
+      "text": "造成的伤害+X",
+      "icon": "res://icon.svg",
+      "anim_module": "",
+      "script": "res://scripts/statuses/strength.gd"
+    },
+    {
+      "id": "temp_strength",
+      "name": "临时力量",
+      "text": "造成的伤害+X（下回合开始时清空）",
+      "icon": "res://icon.svg",
+      "anim_module": "",
+      "script": "res://scripts/statuses/temp_strength.gd"
+    },
+    {
+      "id": "enemy_attack_halved_this_turn",
+      "name": "示警",
+      "text": "本回合敌人的攻击伤害减半（向下取整）",
+      "icon": "res://icon.svg",
+      "anim_module": "",
+      "script": "res://scripts/statuses/enemy_attack_halved_this_turn.gd"
+    },
+    {
+      "id": "next_attack_double",
+      "name": "凝神",
+      "text": "本回合下次攻击发动两次",
+      "icon": "res://icon.svg",
+      "anim_module": "",
+      "script": ""
+    },
+    {
+      "id": "next_enemy_hit_zero",
+      "name": "假目标",
+      "text": "下次受到的敌人攻击伤害变为0",
+      "icon": "res://icon.svg",
+      "anim_module": "",
+      "script": ""
+    },
+    {
+      "id": "move_forward_deal_damage",
+      "name": "死亡舞步",
+      "text": "本场战斗中每次前进时造成伤害",
+      "icon": "res://icon.svg",
+      "anim_module": "",
+      "script": ""
+    },
+    {
+      "id": "heroic_charge",
+      "name": "英勇冲锋",
+      "text": "本回合每向前移动1格获得临时力量",
+      "icon": "res://icon.svg",
+      "anim_module": "",
+      "script": ""
+    },
+    {
+      "id": "move_backward_gain_block",
+      "name": "绝望舞步",
+      "text": "本场战斗中每次后退时获得格挡",
+      "icon": "res://icon.svg",
+      "anim_module": "",
+      "script": ""
+    },
+    {
+      "id": "next_turn_gain_block",
+      "name": "掩蔽",
+      "text": "下回合开始时获得格挡",
+      "icon": "res://icon.svg",
+      "anim_module": "",
+      "script": ""
+    },
+    {
+      "id": "next_time_take_damage_reflect",
+      "name": "自卫反射",
+      "text": "本回合下次受到敌人伤害时反击",
+      "icon": "res://icon.svg",
+      "anim_module": "",
+      "script": ""
+    },
+    {
+      "id": "test_strength",
+      "name": "力量(测试)",
+      "text": "造成的伤害+X",
+      "icon": "res://icon.svg",
+      "anim_module": "",
+      "script": "res://scripts/statuses/test_strength.gd"
+    },
+    {
+      "id": "test_vulnerable",
+      "name": "易伤(测试)",
+      "text": "受到的伤害提高50%×层数（向下取整）",
+      "icon": "res://icon.svg",
+      "anim_module": "",
+      "script": "res://scripts/statuses/test_vulnerable.gd"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[node name="BattleController" type="Node"]
+
+[node name="TurnFlow" type="Node" parent="."]
+[node name="BattleState" type="Node" parent="."]
+[node name="EnemyPlaceholder" type="Node" parent="."]
+[node name="SkillResolverPlaceholder" type="Node" parent="."]

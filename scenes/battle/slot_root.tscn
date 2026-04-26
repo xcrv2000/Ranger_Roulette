@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[node name="SlotController" type="Node"]
+
+[node name="WheelPool1" type="Node" parent="."]
+[node name="WheelPool2" type="Node" parent="."]
+[node name="WheelPool3" type="Node" parent="."]
+[node name="SpinResult" type="Node" parent="."]
