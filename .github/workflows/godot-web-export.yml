@@ -54,12 +54,12 @@ jobs:
         run: |
           set -euo pipefail
           cat > build/web/_headers <<'EOF'
-/*
-  Cross-Origin-Opener-Policy: same-origin
-  Cross-Origin-Embedder-Policy: require-corp
+          /*
+            Cross-Origin-Opener-Policy: same-origin
+            Cross-Origin-Embedder-Policy: require-corp
 
-/*.wasm
-  Content-Type: application/wasm
+          /*.wasm
+            Content-Type: application/wasm
           EOF
 
       - name: Deploy build to branch
