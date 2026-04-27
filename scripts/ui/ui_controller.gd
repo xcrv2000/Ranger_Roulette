@@ -1794,6 +1794,7 @@ func _hide_event_layer() -> void:
 func _ensure_event_layer() -> void:
 	if not _run_ui:
 		return
+	var stage_parent: Control = _run_ui.get_node_or_null("NodePanel/StageArea") as Control
 	if _run_ui.has_node("EventOptionLayer"):
 		var l := _run_ui.get_node("EventOptionLayer")
 		if l is Control:
@@ -1805,20 +1806,26 @@ func _ensure_event_layer() -> void:
 		_event_layer.name = "EventLayer"
 		_event_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
 		_event_layer.visible = false
-		_event_layer.mouse_filter = Control.MOUSE_FILTER_PASS
+		_event_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_event_layer.z_as_relative = false
 		_event_layer.z_index = 150
-		_run_ui.add_child(_event_layer)
-	_event_layer.mouse_filter = Control.MOUSE_FILTER_PASS
+		(stage_parent if stage_parent else _run_ui).add_child(_event_layer)
+	if stage_parent and _event_layer.get_parent() != stage_parent:
+		var old_parent := _event_layer.get_parent()
+		if old_parent:
+			old_parent.remove_child(_event_layer)
+		stage_parent.add_child(_event_layer)
+	_event_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var bg: ColorRect = _event_layer.get_node_or_null("EventBackground") as ColorRect
 	if not bg:
 		bg = ColorRect.new()
 		bg.name = "EventBackground"
-		bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+		bg.set_anchors_preset(Control.PRESET_TOP_LEFT)
 		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_event_layer.add_child(bg)
 		_event_layer.move_child(bg, 0)
 	bg.color = Color8(152, 115, 185, 255)
+	bg.visible = false
 	if not _event_text:
 		_event_text = _event_layer.get_node_or_null("EventText") as RichTextLabel
 	if not _event_text:
@@ -2305,6 +2312,7 @@ func _apply_event_layout() -> void:
 	_event_layout_scheduled = false
 	if not _event_layer or not _event_layer.visible:
 		return
+	var bg: ColorRect = _event_layer.get_node_or_null("EventBackground") as ColorRect
 	if _run_ui and _event_text and _run_ui.has_node("EventTextAnchor"):
 		var anchor := _run_ui.get_node("EventTextAnchor")
 		if anchor is Control:
@@ -2325,6 +2333,11 @@ func _apply_event_layout() -> void:
 		_event_layout_retry = 0
 		var y := rect4.position.y - _event_text.size.y - 12.0
 		_event_text.global_position = Vector2(left_x, y)
+	if bg and _event_text and _event_text.visible:
+		var pad: float = 12.0
+		bg.visible = true
+		bg.global_position = _event_text.global_position - Vector2(pad, pad)
+		bg.size = _event_text.size + Vector2(pad * 2.0, pad * 2.0)
 	if _event_options_box:
 		var target_rect := Rect2(Vector2(540, 820), Vector2(156, 56))
 		if _run_ui and _run_ui.has_node("EventOptionAnchor"):

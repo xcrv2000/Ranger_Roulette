@@ -24,47 +24,49 @@
         width: 100vw;
         height: 100vh;
         height: 100dvh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        position: relative;
+      }
+
+      #container {
+        width: 720px;
+        height: 1280px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform-origin: 0 0;
       }
 
       #canvas {
         display: block;
-        width: 0;
-        height: 0;
+        width: 100%;
+        height: 100%;
         outline: none;
       }
     </style>
   </head>
   <body>
-    <canvas id="canvas"></canvas>
+    <div id="container">
+      <canvas id="canvas"></canvas>
+    </div>
     <script src="$GODOT_URL"></script>
     <script>
       const canvas = document.getElementById("canvas");
       const baseWidth = 720;
       const baseHeight = 1280;
-      const aspect = baseWidth / baseHeight;
+      const container = document.getElementById("container");
 
-      function resizeCanvas() {
+      function resize() {
         const vw = window.innerWidth;
         const vh = window.innerHeight;
+        const scale = Math.min(vw / baseWidth, vh / baseHeight);
 
-        let w = vw;
-        let h = w / aspect;
-        if (h > vh) {
-          h = vh;
-          w = h * aspect;
-        }
-
-        canvas.style.width = `${Math.floor(w)}px`;
-        canvas.style.height = `${Math.floor(h)}px`;
+        container.style.transform = `translate(-50%, -50%) scale(${scale})`;
       }
 
-      resizeCanvas();
-      window.addEventListener("resize", resizeCanvas);
+      resize();
+      window.addEventListener("resize", resize);
       if (window.visualViewport) {
-        window.visualViewport.addEventListener("resize", resizeCanvas);
+        window.visualViewport.addEventListener("resize", resize);
       }
 
       const engine = new Engine($GODOT_CONFIG);
