@@ -620,7 +620,7 @@ func _ensure_reflection_layer() -> void:
 	_run_ui.add_child(_reflection_layer)
 
 	var backdrop := ColorRect.new()
-	backdrop.color = Color(0, 0, 0, 0.6)
+	backdrop.color = Color(0, 0, 0, 0.95)
 	backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_reflection_layer.add_child(backdrop)
 
@@ -1745,6 +1745,9 @@ func _render_event_reward_slot_buttons(card_id: String) -> void:
 	var wheel_rule := String(constraints.get("wheel", ""))
 	var wheel_count: int = int(max(1, _last_wheel_count))
 	var last_idx: int = wheel_count - 1
+	if _active_run:
+		while last_idx >= 0 and _active_run.is_wheel_locked(last_idx):
+			last_idx -= 1
 	for i in range(wheel_count):
 		if _active_run and _active_run.is_wheel_locked(i):
 			continue
@@ -1785,6 +1788,9 @@ func _render_reward_slot_buttons(card_id: String) -> void:
 	var wheel_rule := String(constraints.get("wheel", ""))
 	var wheel_count: int = int(max(1, _last_wheel_count))
 	var last_idx: int = wheel_count - 1
+	if _active_run:
+		while last_idx >= 0 and _active_run.is_wheel_locked(last_idx):
+			last_idx -= 1
 	for i in range(wheel_count):
 		if _active_run and _active_run.is_wheel_locked(i):
 			continue
@@ -2312,7 +2318,7 @@ func _ensure_rest_adjust_layer() -> void:
 	backdrop.flat = true
 	backdrop.focus_mode = Control.FOCUS_NONE
 	backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
-	backdrop.modulate = Color(0, 0, 0, 0.6)
+	backdrop.modulate = Color(0, 0, 0, 0.95)
 	backdrop.pressed.connect(func() -> void:
 		_hide_rest_adjust()
 		_show_rest_root_options_again()
@@ -2475,8 +2481,16 @@ func _can_place_card_to_wheel(card_id: String, wheel_index: int, wheel_count: in
 	var def: Dictionary = _card_db.get_card(card_id)
 	var constraints: Dictionary = def.get("constraints", {})
 	var wheel_rule := String(constraints.get("wheel", ""))
-	if wheel_rule == "last" and wheel_index != wheel_count - 1:
-		return false
+	if wheel_rule == "last":
+		var last_idx := wheel_count - 1
+		if _rest_adjust_run:
+			while last_idx >= 0 and _rest_adjust_run.is_wheel_locked(last_idx):
+				last_idx -= 1
+		elif _active_run:
+			while last_idx >= 0 and _active_run.is_wheel_locked(last_idx):
+				last_idx -= 1
+		if wheel_index != last_idx:
+			return false
 	return true
 
 func _on_rest_adjust_bullet_pressed(wheel_index: int, entry_index: int, card_id: String) -> void:
@@ -2564,7 +2578,7 @@ func _ensure_event_remove_layer() -> void:
 	backdrop.flat = true
 	backdrop.focus_mode = Control.FOCUS_NONE
 	backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
-	backdrop.modulate = Color(0, 0, 0, 0.6)
+	backdrop.modulate = Color(0, 0, 0, 0.95)
 	backdrop.pressed.connect(func() -> void:
 		hide_event_remove_bullet()
 		event_remove_bullet_cancelled.emit()

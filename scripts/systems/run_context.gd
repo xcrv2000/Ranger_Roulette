@@ -35,6 +35,12 @@ func is_wheel_locked(wheel_index: int) -> bool:
 		return false
 	return bool(locked_wheels[wheel_index])
 
+func get_last_unlocked_wheel_index() -> int:
+	for i in range(slot_wheels.size() - 1, -1, -1):
+		if not is_wheel_locked(i):
+			return i
+	return -1
+
 func set_wheel_locked(wheel_index: int, locked: bool) -> void:
 	if wheel_index < 0:
 		return
@@ -71,7 +77,9 @@ func add_card_to_wheel(card_id: String, wheel_index: int) -> bool:
 		return false
 	if is_wheel_locked(wheel_index):
 		return false
-	var last_wheel_index := slot_wheels.size() - 1
+	var last_wheel_index := get_last_unlocked_wheel_index()
+	if last_wheel_index < 0:
+		return false
 	var db := CardDatabase.load_default()
 	var def := db.get_card(card_id)
 	var constraints: Dictionary = def.get("constraints", {})
@@ -90,7 +98,9 @@ func insert_card_to_wheel(card_id: String, wheel_index: int, entry_index: int, i
 	if is_wheel_locked(wheel_index):
 		return false
 	if not ignore_constraints:
-		var last_wheel_index := slot_wheels.size() - 1
+		var last_wheel_index := get_last_unlocked_wheel_index()
+		if last_wheel_index < 0:
+			return false
 		var db := CardDatabase.load_default()
 		var def := db.get_card(card_id)
 		var constraints: Dictionary = def.get("constraints", {})
