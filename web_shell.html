@@ -31,10 +31,7 @@
 
       #container {
         aspect-ratio: 720 / 1280;
-        height: 100vh;
-        max-height: 100vh;
-        height: 100dvh;
-        max-height: 100dvh;
+        height: min(100dvh, calc(100vw * 1280 / 720));
         max-width: 100vw;
         width: auto;
       }

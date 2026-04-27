@@ -2358,6 +2358,14 @@ func _apply_event_layout() -> void:
 				target_rect = (anchor as Control).get_global_rect()
 		elif _reward_skip_button:
 			target_rect = _reward_skip_button.get_global_rect()
+		else:
+			var vis := get_viewport().get_visible_rect()
+			var sx := vis.size.x / 720.0
+			var sy := vis.size.y / 1280.0
+			target_rect = Rect2(
+				vis.position + Vector2(540.0 * sx, 820.0 * sy),
+				Vector2(156.0 * sx, 56.0 * sy)
+			)
 
 		_event_options_box.global_position = target_rect.position
 		for c in _event_options_box.get_children():
