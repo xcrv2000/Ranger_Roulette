@@ -1,8 +1,8 @@
-[gd_scene format=3]
+[gd_scene load_steps=0 format=3]
 
-[ext_resource type="Texture2D" path="res://设计方案/界面布局.png" id="1"]
-[ext_resource type="Texture2D" path="res://icon.svg" id="2"]
-[ext_resource type="Texture2D" path="res://设计方案/角色草稿.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://dk63agqamyqcq" path="res://设计方案/pics/drafts/界面布局.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://bq4sov8hgp6bl" path="res://icon.svg" id="2"]
+[ext_resource type="Texture2D" uid="uid://dcbnjvx8cb3ee" path="res://设计方案/pics/drafts/角色草稿.png" id="3"]
 
 [node name="UIRoot" type="Control"]
 layout_mode = 3
