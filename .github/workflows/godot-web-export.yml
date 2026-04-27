@@ -67,16 +67,17 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p /tmp/web-build
-          cp -a build/web/. /tmp/web-build/
+          DEPLOY_DIR="$(mktemp -d)"
+          cp -a build/web/. "$DEPLOY_DIR/"
+          touch "$DEPLOY_DIR/.nojekyll"
 
+          cd "$DEPLOY_DIR"
+
+          git init
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git switch --orphan "$DEPLOY_BRANCH"
-          git rm -rf . >/dev/null 2>&1 || true
-          cp -a /tmp/web-build/. .
-          touch .nojekyll
+          git checkout --orphan "$DEPLOY_BRANCH"
           git add -A
 
           if git diff --cached --quiet; then
@@ -84,4 +85,5 @@ jobs:
           fi
 
           git commit -m "Deploy web build"
+          git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git push -f origin "$DEPLOY_BRANCH"
