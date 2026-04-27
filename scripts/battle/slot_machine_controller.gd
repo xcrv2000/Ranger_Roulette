@@ -24,9 +24,12 @@ func set_wheels(p_wheels: Array) -> void:
 		wheels.append(_normalize_wheel(w))
 	configured.emit(wheels.size())
 
-func roll() -> Array[Dictionary]:
+func roll(locked_wheels: Array = []) -> Array[Dictionary]:
 	var results: Array[Dictionary] = []
 	for wi in range(wheels.size()):
+		if wi < locked_wheels.size() and bool(locked_wheels[wi]):
+			results.append({"wheel_index": wi, "entry_index": -1, "id": ""})
+			continue
 		var w: Array = wheels[wi]
 		var candidates: Array[int] = []
 		for ei in range(w.size()):

@@ -68,6 +68,24 @@ var _debug_wheel_down_btn: Button
 var _debug_wheel_list: VBoxContainer
 var _debug_wheel_selected_index: int = -1
 
+var _debug_route_tab: Control
+var _debug_route_text: RichTextLabel
+var _debug_jump_floor: SpinBox
+var _debug_jump_node: SpinBox
+var _debug_jump_apply: Button
+var _debug_next_event_info: Label
+var _debug_next_event_scope: OptionButton
+var _debug_next_event_select: OptionButton
+var _debug_next_event_apply: Button
+var _debug_next_enemy_info: Label
+var _debug_next_enemy_scope: OptionButton
+var _debug_next_enemy_select: OptionButton
+var _debug_next_enemy_apply: Button
+
+var _map: Node
+var _event_db: EventDatabase
+var _enemy_db: EnemyDatabase
+
 var _prev_button: Button
 var _next_button: Button
 var _enter_button: Button
@@ -85,6 +103,10 @@ var _last_slot_pools: Array = []
 var _slot_detail_layer: Control
 var _slot_detail_title: Label
 var _slot_detail_text: RichTextLabel
+var _slot_long_press_seq: int = 0
+var _slot_press_seq: int = 0
+var _slot_pressing: bool = false
+var _slot_pressing_wheel: int = -1
 var _quick_toggle: Button
 var _quick_mode_level: int = 0
 
@@ -170,6 +192,7 @@ func show_run_ui() -> void:
 	_clear_screen_root()
 	_run_ui = RUN_UI_SCENE.instantiate()
 	_screen_root.add_child(_run_ui)
+	_map = get_parent().get_node_or_null("MapController")
 	_cache_run_ui_nodes()
 	_wire_run_ui_signals()
 	_set_quick_mode_level(0)
@@ -181,7 +204,7 @@ func show_run_ui() -> void:
 	if _next_button:
 		_next_button.visible = false
 
-func show_end(title: String = "胜利（占位）", body: String = "本局流程已跑通：封面 → 节点推进 → 战斗占位 → 结束。") -> void:
+func show_end(title: String = "胜利！", body: String = "你获得了游戏胜利。") -> void:
 	if not _screen_root:
 		_screen_root = get_parent().get_node("ScreenRoot")
 	_clear_screen_root()
@@ -753,19 +776,9 @@ func _cache_run_ui_nodes() -> void:
 	_slot_bar = _run_ui.get_node("HUD/BottomBar/SlotBar")
 	_leave_button = _run_ui.get_node_or_null("LeaveButton") as Button
 	_slot_panels = []
-	_slot_rich_labels = []
 	for c in _slot_bar.get_children():
 		if c is Control:
 			_slot_panels.append(c)
-			var rt := RichTextLabel.new()
-			rt.bbcode_enabled = true
-			rt.fit_content = true
-			rt.scroll_active = false
-			rt.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			rt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			rt.size_flags_vertical = Control.SIZE_EXPAND_FILL
-			(c as Control).add_child(rt)
-			_slot_rich_labels.append(rt)
 	for i in range(_slot_panels.size()):
 		_wire_slot_panel(_slot_panels[i], i)
 
@@ -844,6 +857,22 @@ func _cache_run_ui_nodes() -> void:
 		var price_label := _run_ui.get_node_or_null("ShopPanel/Box/CardRow/Item%d/Price%d" % [i, i]) as Label
 		if price_label:
 			_shop_price_labels.append(price_label)
+
+	_raise_all_buttons(_run_ui)
+
+func _raise_all_buttons(root: Node) -> void:
+	if not root:
+		return
+	var stack: Array[Node] = [root]
+	while not stack.is_empty():
+		var n: Node = stack.pop_back()
+		if n is BaseButton:
+			var c := n as Control
+			c.z_as_relative = false
+			c.z_index = 220
+		for ch in n.get_children():
+			if ch is Node:
+				stack.append(ch)
 
 func _wire_run_ui_signals() -> void:
 	_content_primary.pressed.connect(func() -> void:
@@ -1030,6 +1059,12 @@ func _ensure_debug_tabs() -> void:
 	(_debug_wheel_tab as VBoxContainer).size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_debug_tabs.add_child(_debug_wheel_tab)
 
+	_debug_route_tab = VBoxContainer.new()
+	_debug_route_tab.name = "路线"
+	(_debug_route_tab as VBoxContainer).size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	(_debug_route_tab as VBoxContainer).size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_debug_tabs.add_child(_debug_route_tab)
+
 	var to_move: Array[Node] = []
 	for c in vb.get_children():
 		if c == header or c == _debug_tabs:
@@ -1043,6 +1078,7 @@ func _ensure_debug_tabs() -> void:
 			basic.add_child(n)
 
 	_build_wheel_editor_ui(_debug_wheel_tab as VBoxContainer)
+	_build_route_debug_ui(_debug_route_tab as VBoxContainer)
 	vb.set_meta("debug_tabs_ready", true)
 
 func _build_wheel_editor_ui(root: VBoxContainer) -> void:
@@ -1116,6 +1152,112 @@ func _build_wheel_editor_ui(root: VBoxContainer) -> void:
 	_debug_wheel_list = VBoxContainer.new()
 	_debug_wheel_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(_debug_wheel_list)
+
+func _build_route_debug_ui(root: VBoxContainer) -> void:
+	for c in root.get_children():
+		c.queue_free()
+
+	var jump_row := HBoxContainer.new()
+	root.add_child(jump_row)
+	var jump_label := Label.new()
+	jump_label.text = "跳跃到"
+	jump_row.add_child(jump_label)
+	_debug_jump_floor = SpinBox.new()
+	_debug_jump_floor.min_value = 1
+	_debug_jump_floor.max_value = 99
+	_debug_jump_floor.step = 1
+	jump_row.add_child(_debug_jump_floor)
+	var floor_label := Label.new()
+	floor_label.text = "层"
+	jump_row.add_child(floor_label)
+	_debug_jump_node = SpinBox.new()
+	_debug_jump_node.min_value = 1
+	_debug_jump_node.max_value = 99
+	_debug_jump_node.step = 1
+	jump_row.add_child(_debug_jump_node)
+	var node_label := Label.new()
+	node_label.text = "节点"
+	jump_row.add_child(node_label)
+	_debug_jump_apply = Button.new()
+	_debug_jump_apply.text = "跳转"
+	_debug_jump_apply.pressed.connect(func() -> void:
+		if not _debug_jump_floor or not _debug_jump_node:
+			return
+		debug_action.emit({"type": "jump_to_node", "floor": int(_debug_jump_floor.value), "node": int(_debug_jump_node.value)})
+	)
+	jump_row.add_child(_debug_jump_apply)
+
+	var sep1 := HSeparator.new()
+	root.add_child(sep1)
+
+	_debug_next_event_info = Label.new()
+	_debug_next_event_info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	root.add_child(_debug_next_event_info)
+	var event_row := HBoxContainer.new()
+	root.add_child(event_row)
+	_debug_next_event_scope = OptionButton.new()
+	_debug_next_event_scope.add_item("随机池", 0)
+	_debug_next_event_scope.add_item("全部", 1)
+	event_row.add_child(_debug_next_event_scope)
+	_debug_next_event_select = OptionButton.new()
+	event_row.add_child(_debug_next_event_select)
+	_debug_next_event_apply = Button.new()
+	_debug_next_event_apply.text = "应用事件"
+	_debug_next_event_apply.pressed.connect(func() -> void:
+		if not _debug_next_event_select:
+			return
+		var idx := _debug_next_event_select.selected
+		if idx < 0:
+			return
+		var id := String(_debug_next_event_select.get_item_metadata(idx))
+		debug_action.emit({"type": "override_next_event", "event_id": id})
+	)
+	event_row.add_child(_debug_next_event_apply)
+	_debug_next_event_scope.item_selected.connect(func(_i: int) -> void:
+		_refresh_route_debug()
+	)
+
+	var sep2 := HSeparator.new()
+	root.add_child(sep2)
+
+	_debug_next_enemy_info = Label.new()
+	_debug_next_enemy_info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	root.add_child(_debug_next_enemy_info)
+	var enemy_row := HBoxContainer.new()
+	root.add_child(enemy_row)
+	_debug_next_enemy_scope = OptionButton.new()
+	_debug_next_enemy_scope.add_item("随机池", 0)
+	_debug_next_enemy_scope.add_item("全部", 1)
+	enemy_row.add_child(_debug_next_enemy_scope)
+	_debug_next_enemy_select = OptionButton.new()
+	enemy_row.add_child(_debug_next_enemy_select)
+	_debug_next_enemy_apply = Button.new()
+	_debug_next_enemy_apply.text = "应用怪物"
+	_debug_next_enemy_apply.pressed.connect(func() -> void:
+		if not _debug_next_enemy_select:
+			return
+		var idx := _debug_next_enemy_select.selected
+		if idx < 0:
+			return
+		var id := String(_debug_next_enemy_select.get_item_metadata(idx))
+		debug_action.emit({"type": "override_next_enemy", "enemy_id": id})
+	)
+	enemy_row.add_child(_debug_next_enemy_apply)
+	_debug_next_enemy_scope.item_selected.connect(func(_i: int) -> void:
+		_refresh_route_debug()
+	)
+
+	var sep3 := HSeparator.new()
+	root.add_child(sep3)
+
+	var scroll := ScrollContainer.new()
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	root.add_child(scroll)
+	_debug_route_text = RichTextLabel.new()
+	_debug_route_text.fit_content = true
+	_debug_route_text.scroll_active = false
+	_debug_route_text.bbcode_enabled = false
+	scroll.add_child(_debug_route_text)
 
 func _refresh_wheel_editor() -> void:
 	if not _debug_wheel_tab or not _debug_wheel_select or not _debug_wheel_card_select or not _debug_wheel_insert_pos or not _debug_wheel_list:
@@ -1257,6 +1399,124 @@ func _on_debug_wheel_move(delta: int) -> void:
 	debug_action.emit({"type": "set_slot_wheels", "wheels": _active_run.get_wheels_snapshot()})
 	_refresh_wheel_editor()
 
+func _refresh_route_debug() -> void:
+	if not _debug_route_text or not _map:
+		return
+	if not _event_db:
+		_event_db = EventDatabase.load_default()
+	if not _enemy_db:
+		_enemy_db = EnemyDatabase.load_default()
+	var floors := int(_map.get_floor_count())
+	var nodes_per_floor := int(_map.get_nodes_per_floor())
+	if _debug_jump_floor:
+		_debug_jump_floor.max_value = float(max(1, floors))
+	if _debug_jump_node:
+		_debug_jump_node.max_value = float(max(1, nodes_per_floor))
+
+	var all_nodes: Array = _map.nodes
+	var lines: PackedStringArray = PackedStringArray()
+	for n in all_nodes:
+		if typeof(n) != TYPE_DICTIONARY:
+			continue
+		var node: Dictionary = n
+		var floor_n := int(node.get("floor", 0)) + 1
+		var node_n := int(node.get("index_in_floor", 0)) + 1
+		var t := String(node.get("type", ""))
+		var name := String(node.get("name", ""))
+		var detail := ""
+		if t == "event":
+			var pool := String(node.get("event_pool", "通用"))
+			var eid := String(node.get("event_id", ""))
+			detail = "event=%s pool=%s" % [eid if not eid.is_empty() else "random", pool]
+		elif t == "battle" or t == "elite" or t == "boss":
+			var pool := String(node.get("enemy_pool", ""))
+			var mid := String(node.get("enemy_id", ""))
+			detail = "enemy=%s pool=%s" % [mid if not mid.is_empty() else "random", pool]
+		lines.append("%d-%02d %s %s %s" % [floor_n, node_n, t, name, detail])
+	_debug_route_text.text = "\n".join(lines)
+
+	var next_event_types: Array[String] = ["event"]
+	var next_event_idx := int(_map.find_next_index(_map.current_index, next_event_types))
+	if _debug_next_event_info:
+		if next_event_idx < 0:
+			_debug_next_event_info.text = "下个事件节点：无"
+		else:
+			var node: Dictionary = all_nodes[next_event_idx]
+			var floor_n := int(node.get("floor", 0)) + 1
+			var node_n := int(node.get("index_in_floor", 0)) + 1
+			var pool := String(node.get("event_pool", "通用"))
+			var eid := String(node.get("event_id", ""))
+			_debug_next_event_info.text = "下个事件节点：第%d层 %d节点 随机池=%s 当前=%s" % [floor_n, node_n, pool, eid if not eid.is_empty() else "random"]
+	if _debug_next_event_select and _debug_next_event_scope:
+		_debug_next_event_select.clear()
+		_debug_next_event_select.add_item("随机（按池）")
+		_debug_next_event_select.set_item_metadata(0, "")
+		if next_event_idx >= 0 and _event_db:
+			var node: Dictionary = all_nodes[next_event_idx]
+			var pool := String(node.get("event_pool", "通用"))
+			var eid := String(node.get("event_id", ""))
+			var use_all := _debug_next_event_scope.selected == 1
+			var ids: Array[String] = []
+			if use_all:
+				ids = _event_db.get_all_ids()
+			else:
+				for id in _event_db.get_all_ids():
+					var e: Dictionary = _event_db.get_event(id)
+					if String(e.get("random_pool", "通用")) != pool:
+						continue
+					ids.append(id)
+			for id in ids:
+				var e: Dictionary = _event_db.get_event(id)
+				var nm := String(e.get("name", id))
+				var label := "%s (%s)" % [nm, id]
+				var at := _debug_next_event_select.item_count
+				_debug_next_event_select.add_item(label)
+				_debug_next_event_select.set_item_metadata(at, id)
+			if not eid.is_empty():
+				for i in range(_debug_next_event_select.item_count):
+					if String(_debug_next_event_select.get_item_metadata(i)) == eid:
+						_debug_next_event_select.select(i)
+						break
+
+	var next_enemy_types: Array[String] = ["battle", "elite", "boss"]
+	var next_enemy_idx := int(_map.find_next_index(_map.current_index, next_enemy_types))
+	if _debug_next_enemy_info:
+		if next_enemy_idx < 0:
+			_debug_next_enemy_info.text = "下个怪物节点：无"
+		else:
+			var node: Dictionary = all_nodes[next_enemy_idx]
+			var floor_n := int(node.get("floor", 0)) + 1
+			var node_n := int(node.get("index_in_floor", 0)) + 1
+			var pool := String(node.get("enemy_pool", ""))
+			var mid := String(node.get("enemy_id", ""))
+			_debug_next_enemy_info.text = "下个怪物节点：第%d层 %d节点 随机池=%s 当前=%s" % [floor_n, node_n, pool if not pool.is_empty() else "-", mid if not mid.is_empty() else "random"]
+	if _debug_next_enemy_select and _debug_next_enemy_scope:
+		_debug_next_enemy_select.clear()
+		_debug_next_enemy_select.add_item("随机（按池）")
+		_debug_next_enemy_select.set_item_metadata(0, "")
+		if next_enemy_idx >= 0 and _enemy_db:
+			var node: Dictionary = all_nodes[next_enemy_idx]
+			var pool := String(node.get("enemy_pool", ""))
+			var mid := String(node.get("enemy_id", ""))
+			var use_all := _debug_next_enemy_scope.selected == 1
+			var ids: Array[String] = []
+			if use_all:
+				ids = _enemy_db.get_all_ids()
+			elif not pool.is_empty():
+				ids = _enemy_db.get_ids_by_pool(pool)
+			for id in ids:
+				var e: Dictionary = _enemy_db.get_enemy(id)
+				var nm := String(e.get("name", id))
+				var label := "%s (%s)" % [nm, id]
+				var at := _debug_next_enemy_select.item_count
+				_debug_next_enemy_select.add_item(label)
+				_debug_next_enemy_select.set_item_metadata(at, id)
+			if not mid.is_empty():
+				for i in range(_debug_next_enemy_select.item_count):
+					if String(_debug_next_enemy_select.get_item_metadata(i)) == mid:
+						_debug_next_enemy_select.select(i)
+						break
+
 func _get_selected_status_id() -> String:
 	if not _debug_status_select:
 		return ""
@@ -1304,6 +1564,7 @@ func _refresh_debug_panel(run_state: Dictionary, battle_state: Dictionary) -> vo
 			enemy_hp,
 			enemy_intent,
 		]
+	_refresh_route_debug()
 
 func _render_stage_text(mode: String) -> void:
 	if not _stage_label:
@@ -1485,6 +1746,8 @@ func _render_event_reward_slot_buttons(card_id: String) -> void:
 	var wheel_count: int = int(max(1, _last_wheel_count))
 	var last_idx: int = wheel_count - 1
 	for i in range(wheel_count):
+		if _active_run and _active_run.is_wheel_locked(i):
+			continue
 		var b := Button.new()
 		b.text = "加入轮%d" % (i + 1)
 		if wheel_rule == "last" and i != last_idx:
@@ -1523,6 +1786,8 @@ func _render_reward_slot_buttons(card_id: String) -> void:
 	var wheel_count: int = int(max(1, _last_wheel_count))
 	var last_idx: int = wheel_count - 1
 	for i in range(wheel_count):
+		if _active_run and _active_run.is_wheel_locked(i):
+			continue
 		var b := Button.new()
 		b.text = "加入轮%d" % (i + 1)
 		if wheel_rule == "last" and i != last_idx:
@@ -1542,6 +1807,7 @@ func _render_slot_debug(slot_state: Dictionary) -> void:
 	var roll: Array = slot_state.get("last_roll", [])
 	var active_wheel := int(slot_state.get("active_wheel", -1))
 	var is_resolving := bool(slot_state.get("is_resolving", false))
+	var locked_wheels: Array = slot_state.get("locked_wheels", [])
 	if not _card_db:
 		_card_db = CardDatabase.load_default()
 	_ensure_slot_panels(int(max(4, pools.size())))
@@ -1552,37 +1818,42 @@ func _render_slot_debug(slot_state: Dictionary) -> void:
 			roll_by_wheel[int(d.get("wheel_index", -1))] = String(d.get("id", ""))
 	for i in range(_slot_panels.size()):
 		var p: Control = _slot_panels[i]
-		var rt: RichTextLabel = _slot_rich_labels[i] if i < _slot_rich_labels.size() else null
-		var unlocked := i < pools.size()
+		var exists := i < pools.size()
+		var is_locked := false
+		if exists and i < locked_wheels.size():
+			is_locked = bool(locked_wheels[i])
 		var magazine_art := p.get_node_or_null("MagazineArt")
 		if magazine_art and magazine_art is CanvasItem:
-			(magazine_art as CanvasItem).visible = unlocked
+			(magazine_art as CanvasItem).visible = exists
 		var locked_magazine := p.get_node_or_null("LockedMagazine")
 		if locked_magazine and locked_magazine is CanvasItem:
-			(locked_magazine as CanvasItem).visible = not unlocked
+			(locked_magazine as CanvasItem).visible = (not exists) or is_locked
 		if i >= pools.size():
 			p.visible = true
 			if p.has_node("Label"):
 				var l: Label = p.get_node("Label")
 				l.visible = true
 				l.text = "slot %d\n（占位）" % (i + 1)
-			if rt:
-				rt.text = "轮 %d\n(未解锁)" % (i + 1)
+			var rr := p.get_node_or_null("RollResultLabel") as Label
+			if rr:
+				rr.text = "未解锁"
 			p.modulate = Color(0.75, 0.75, 0.75, 1.0)
 			continue
 		p.visible = true
 		if p.has_node("Label"):
 			p.get_node("Label").visible = false
-		var head := "轮 %d" % (i + 1)
-		if i == active_wheel:
-			head = "▶ %s" % head
 		var rid := String(roll_by_wheel.get(i, ""))
 		var roll_name := ""
 		if not rid.is_empty() and _card_db:
 			roll_name = String(_card_db.get_card(rid).get("name", rid))
-		var roll_line := ("-> %s" % (roll_name if not roll_name.is_empty() else rid)) if not rid.is_empty() else "->"
-		if rt:
-			rt.text = "%s\n%s" % [head, roll_line]
+		var rr2 := p.get_node_or_null("RollResultLabel") as Label
+		if rr2:
+			if is_locked:
+				rr2.text = "锁定"
+			elif rid.is_empty():
+				rr2.text = "-"
+			else:
+				rr2.text = roll_name if not roll_name.is_empty() else rid
 		if i == active_wheel:
 			p.modulate = Color(1.0, 0.65, 0.15)
 		elif is_resolving:
@@ -1594,19 +1865,34 @@ func _ensure_slot_panels(wheel_count: int) -> void:
 	if not _slot_bar:
 		return
 	while _slot_panels.size() < wheel_count:
-		var p := PanelContainer.new()
-		p.custom_minimum_size = Vector2(140, 64)
+		var p := Control.new()
+		p.custom_minimum_size = Vector2(128, 128)
+		p.position = Vector2(float(_slot_panels.size()) * 128.0, 0.0)
+		p.size = Vector2(128, 128)
 		_slot_bar.add_child(p)
 		_slot_panels.append(p)
-		var rt := RichTextLabel.new()
-		rt.bbcode_enabled = true
-		rt.fit_content = true
-		rt.scroll_active = false
-		rt.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		rt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		rt.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		p.add_child(rt)
-		_slot_rich_labels.append(rt)
+		var mag := TextureRect.new()
+		mag.name = "MagazineArt"
+		mag.set_anchors_preset(Control.PRESET_FULL_RECT)
+		mag.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		mag.texture = load("res://设计方案/pics/弹匣.png")
+		mag.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		p.add_child(mag)
+		var lock_mag := TextureRect.new()
+		lock_mag.name = "LockedMagazine"
+		lock_mag.set_anchors_preset(Control.PRESET_FULL_RECT)
+		lock_mag.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		lock_mag.texture = load("res://设计方案/pics/锁定弹匣.png")
+		lock_mag.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		p.add_child(lock_mag)
+		var rr := Label.new()
+		rr.name = "RollResultLabel"
+		rr.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+		rr.offset_top = -28.0
+		rr.offset_bottom = 0.0
+		rr.horizontal_alignment = HorizontalAlignment.HORIZONTAL_ALIGNMENT_CENTER
+		rr.vertical_alignment = VerticalAlignment.VERTICAL_ALIGNMENT_CENTER
+		p.add_child(rr)
 		_wire_slot_panel(p, _slot_panels.size() - 1)
 
 func _wire_slot_panel(panel: Control, wheel_index: int) -> void:
@@ -1621,8 +1907,39 @@ func _wire_slot_panel(panel: Control, wheel_index: int) -> void:
 		if event is InputEventMouseButton:
 			var mb := event as InputEventMouseButton
 			if mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
-				_show_slot_detail(int(panel.get_meta("wheel_index", -1)))
+				_start_slot_long_press(int(panel.get_meta("wheel_index", -1)))
+			elif mb.button_index == MOUSE_BUTTON_LEFT and not mb.pressed:
+				_end_slot_long_press()
+		elif event is InputEventScreenTouch:
+			var t := event as InputEventScreenTouch
+			if t.pressed:
+				_start_slot_long_press(int(panel.get_meta("wheel_index", -1)))
+			else:
+				_end_slot_long_press()
 	)
+
+func _start_slot_long_press(wheel_index: int) -> void:
+	_slot_pressing = true
+	_slot_pressing_wheel = wheel_index
+	_slot_press_seq += 1
+	var seq := _slot_press_seq
+	call_deferred("_slot_long_press_wait_then_show", seq, wheel_index)
+
+func _end_slot_long_press() -> void:
+	_slot_pressing = false
+	_slot_pressing_wheel = -1
+	_hide_slot_detail()
+
+func _slot_long_press_wait_then_show(seq: int, wheel_index: int) -> void:
+	_slot_long_press_seq = seq
+	await get_tree().create_timer(0.28).timeout
+	if not _slot_pressing:
+		return
+	if _slot_press_seq != seq:
+		return
+	if _slot_pressing_wheel != wheel_index:
+		return
+	_show_slot_detail(wheel_index)
 
 func _show_slot_detail(wheel_index: int) -> void:
 	_ensure_slot_detail_layer()
@@ -1654,9 +1971,17 @@ func _ensure_slot_detail_layer() -> void:
 	backdrop.flat = true
 	backdrop.focus_mode = Control.FOCUS_NONE
 	backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
-	backdrop.modulate = Color(0, 0, 0, 0.6)
-	backdrop.pressed.connect(func() -> void:
-		_hide_slot_detail()
+	backdrop.modulate = Color(0, 0, 0, 0.95)
+	backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
+	backdrop.gui_input.connect(func(event: InputEvent) -> void:
+		if event is InputEventMouseButton:
+			var mb := event as InputEventMouseButton
+			if mb.button_index == MOUSE_BUTTON_LEFT and not mb.pressed:
+				_end_slot_long_press()
+		elif event is InputEventScreenTouch:
+			var t := event as InputEventScreenTouch
+			if not t.pressed:
+				_end_slot_long_press()
 	)
 	_slot_detail_layer.add_child(backdrop)
 
@@ -1684,13 +2009,6 @@ func _ensure_slot_detail_layer() -> void:
 	_slot_detail_text.scroll_active = true
 	_slot_detail_text.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	vb.add_child(_slot_detail_text)
-
-	var close_btn := Button.new()
-	close_btn.text = "关闭"
-	close_btn.pressed.connect(func() -> void:
-		_hide_slot_detail()
-	)
-	vb.add_child(close_btn)
 
 func _format_wheel_entries(entries: Array) -> String:
 	var lines: Array[String] = []
@@ -1765,7 +2083,10 @@ func _set_slot_pools_from_run(run: RunContext) -> void:
 			pools.append(entries)
 	_last_slot_pools = pools
 	_last_wheel_count = max(1, pools.size())
-	_render_slot_debug({"pools": pools, "last_roll": [], "active_wheel": -1, "is_resolving": false})
+	var locked: Array = []
+	if run:
+		locked = run.get_locked_wheels_snapshot()
+	_render_slot_debug({"pools": pools, "last_roll": [], "active_wheel": -1, "is_resolving": false, "locked_wheels": locked})
 
 func _show_event_layer(node: Dictionary) -> void:
 	_ensure_event_layer()
@@ -1928,12 +2249,16 @@ func _render_rest_root_options(seq_id: int, run: RunContext, text2: String) -> v
 		c.queue_free()
 	var rest_btn := Button.new()
 	rest_btn.text = "休息"
+	rest_btn.z_as_relative = false
+	rest_btn.z_index = 220
 	rest_btn.pressed.connect(func() -> void:
 		_on_rest_rest_pressed(seq_id, text2)
 	)
 	_event_options_box.add_child(rest_btn)
 	var adjust_btn := Button.new()
 	adjust_btn.text = "调整弹匣"
+	adjust_btn.z_as_relative = false
+	adjust_btn.z_index = 220
 	adjust_btn.pressed.connect(func() -> void:
 		_on_rest_adjust_pressed(seq_id, run, text2)
 	)
@@ -2077,6 +2402,9 @@ func _render_rest_adjust_columns() -> void:
 		return
 	var wheels: Array = _rest_adjust_run.get_wheels_snapshot()
 	for wi in range(wheels.size()):
+		var is_locked := _rest_adjust_run.is_wheel_locked(wi)
+		if is_locked:
+			continue
 		var col := VBoxContainer.new()
 		col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		_rest_adjust_columns.add_child(col)
@@ -2123,6 +2451,8 @@ func _render_rest_adjust_targets() -> void:
 		return
 	var wheel_count: int = wheels.size()
 	for wi in range(wheel_count):
+		if _rest_adjust_run.is_wheel_locked(wi):
+			continue
 		var b := Button.new()
 		b.text = "放入轮%d" % (wi + 1)
 		if wi == _rest_held_wheel:
@@ -2152,6 +2482,8 @@ func _can_place_card_to_wheel(card_id: String, wheel_index: int, wheel_count: in
 func _on_rest_adjust_bullet_pressed(wheel_index: int, entry_index: int, card_id: String) -> void:
 	if _event_sequence_id != _rest_adjust_seq_id:
 		return
+	if _rest_adjust_run and _rest_adjust_run.is_wheel_locked(wheel_index):
+		return
 	_rest_held_wheel = wheel_index
 	_rest_held_index = entry_index
 	_rest_held_card_id = card_id
@@ -2162,6 +2494,8 @@ func _on_rest_adjust_target_pressed(target_wheel: int) -> void:
 	if _event_sequence_id != _rest_adjust_seq_id:
 		return
 	if not _rest_adjust_run:
+		return
+	if _rest_adjust_run.is_wheel_locked(target_wheel):
 		return
 	if _rest_held_wheel < 0 or _rest_held_index < 0 or _rest_held_card_id.is_empty():
 		return
@@ -2284,6 +2618,8 @@ func _render_event_remove_columns() -> void:
 		_card_db = CardDatabase.load_default()
 	var wheels: Array = _event_remove_run.get_wheels_snapshot()
 	for wi in range(wheels.size()):
+		if _event_remove_run.is_wheel_locked(wi):
+			continue
 		var col := VBoxContainer.new()
 		col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		_event_remove_columns.add_child(col)
@@ -2352,11 +2688,14 @@ func _apply_event_layout() -> void:
 		bg.size = _event_text.size + Vector2(pad * 2.0, pad * 2.0)
 	if _event_options_box:
 		var target_rect := Rect2(Vector2(540, 820), Vector2(156, 56))
-		if _run_ui and _run_ui.has_node("EventOptionAnchor"):
-			var anchor := _run_ui.get_node("EventOptionAnchor")
-			if anchor is Control:
-				target_rect = (anchor as Control).get_global_rect()
-		elif _reward_skip_button:
+		var option_anchor: Control
+		if _run_ui:
+			option_anchor = _run_ui.get_node_or_null("EventOptionAnchor") as Control
+			if not option_anchor:
+				option_anchor = _run_ui.get_node_or_null("EventOptionLayer/EventOptionAnchor") as Control
+		if option_anchor:
+			target_rect = option_anchor.get_global_rect()
+		elif _reward_skip_button and _reward_skip_button.is_visible_in_tree() and _reward_skip_button.size.x > 1.0 and _reward_skip_button.size.y > 1.0:
 			target_rect = _reward_skip_button.get_global_rect()
 		else:
 			var vis := get_viewport().get_visible_rect()
@@ -2412,6 +2751,8 @@ func _render_event_options(options: Array, seq_id: int) -> void:
 		var rarity := String(o.get("rarity", ""))
 		var btn := Button.new()
 		btn.text = text
+		btn.z_as_relative = false
+		btn.z_index = 220
 		if not rarity.is_empty():
 			_apply_rarity_border(btn, rarity)
 		var oid := id

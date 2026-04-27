@@ -156,6 +156,38 @@ func _on_battle_state_changed(state: Dictionary) -> void:
 
 func _on_debug_action(action: Dictionary) -> void:
 	var t := String(action.get("type", ""))
+	if t == "jump_to_node":
+		var floor_number := int(action.get("floor", 1))
+		var node_number := int(action.get("node", 1))
+		_map.debug_jump_to(floor_number, node_number)
+		_refresh_header()
+		_render_map_ui(_map.current_index, _map.current_index)
+		_start_current_node()
+		return
+	if t == "override_next_event":
+		var event_id := String(action.get("event_id", ""))
+		var start_idx: int = int(_map.current_index)
+		if _state == FlowState.IN_NODE:
+			start_idx += 1
+		var next_event_types: Array[String] = ["event"]
+		var idx: int = int(_map.find_next_index(start_idx, next_event_types))
+		if idx >= 0:
+			_map.set_node_event_id(idx, event_id)
+			if _run:
+				_ui.set_debug_run_state({"gold": _run.gold, "hp": _run.hp, "quick_mode_level": _run.quick_mode_level})
+		return
+	if t == "override_next_enemy":
+		var enemy_id := String(action.get("enemy_id", ""))
+		var start_idx: int = int(_map.current_index)
+		if _state == FlowState.IN_NODE:
+			start_idx += 1
+		var next_enemy_types: Array[String] = ["battle", "elite", "boss"]
+		var idx: int = int(_map.find_next_index(start_idx, next_enemy_types))
+		if idx >= 0:
+			_map.set_node_enemy_id(idx, enemy_id)
+			if _run:
+				_ui.set_debug_run_state({"gold": _run.gold, "hp": _run.hp, "quick_mode_level": _run.quick_mode_level})
+		return
 	if t == "set_gold":
 		var v := int(action.get("value", 0))
 		if _run:
@@ -189,9 +221,20 @@ func _on_debug_action(action: Dictionary) -> void:
 		var wheels: Array = action.get("wheels", [])
 		_battle.set_player_slot_wheels(wheels)
 		return
+	if t == "set_locked_wheels":
+		var values: Array = action.get("locked_wheels", [])
+		if _run:
+			_run.set_locked_wheels(values)
+		_battle.set_locked_wheels(values)
+		return
 
 func _on_battle_finished_victory(_result: Dictionary) -> void:
 	if _state != FlowState.IN_NODE:
+		return
+	var node: Dictionary = _map.get_current_node()
+	var node_type := String(node.get("type", ""))
+	if node_type == "boss" and _map.current_index >= _map.get_last_index():
+		_map.complete_current_and_advance()
 		return
 	_post_battle_queue = _result.get("post_victory_queue", [])
 	_state = FlowState.POST_BATTLE_QUEUE

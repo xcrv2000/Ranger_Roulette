@@ -50,6 +50,7 @@ var _slot_pools: Array = []
 var _slot_last_roll: Array = []
 var _slot_active_wheel: int = -1
 var _is_resolving_roll: bool = false
+var _locked_wheels: Array[bool] = []
 var _input_stage: String = "none"
 var _last_player_oob_attempt: Dictionary = {}
 
@@ -92,6 +93,9 @@ func set_run_context(run: RunContext) -> void:
 	if _run:
 		_player_hp = _run.hp
 		_quick_mode_level = _run.quick_mode_level
+		_locked_wheels = []
+		for v in _run.get_locked_wheels_snapshot():
+			_locked_wheels.append(bool(v))
 	_emit_state()
 
 func set_quick_mode_level(level: int) -> void:
@@ -118,6 +122,18 @@ func set_player_slot_wheels(pools: Array) -> void:
 	if _slot_machine:
 		_slot_machine.set_wheels(_slot_pools)
 		_slot_pools = _slot_machine.get_pool_snapshot()
+	while _locked_wheels.size() < _slot_pools.size():
+		_locked_wheels.append(false)
+	if _run:
+		_run.set_locked_wheels(_locked_wheels)
+	_emit_state()
+
+func set_locked_wheels(values: Array) -> void:
+	_locked_wheels = []
+	for v in values:
+		_locked_wheels.append(bool(v))
+	if _run:
+		_run.set_locked_wheels(_locked_wheels)
 	_emit_state()
 
 func debug_set_player_hp(value: int) -> void:
@@ -430,7 +446,7 @@ func _resolve_roll_timeline() -> void:
 		_slot_machine.setup_default_3_wheels()
 		_slot_pools = _slot_machine.get_pool_snapshot()
 
-	_slot_last_roll = _slot_machine.roll()
+	_slot_last_roll = _slot_machine.roll(_locked_wheels)
 	roll_timeline_started.emit(_slot_last_roll)
 	var roll_ids: Array[String] = []
 	for item in _slot_last_roll:
@@ -445,6 +461,8 @@ func _resolve_roll_timeline() -> void:
 
 	var step_results: Array[Dictionary] = []
 	for i in range(_slot_last_roll.size()):
+		if i < _locked_wheels.size() and _locked_wheels[i]:
+			continue
 		var roll_item: Dictionary = _slot_last_roll[i] if typeof(_slot_last_roll[i]) == TYPE_DICTIONARY else {}
 		var skill_id := String(roll_item.get("id", ""))
 		_slot_active_wheel = i
@@ -1103,7 +1121,7 @@ func _emit_state() -> void:
 		"enemy_outside_index": _battle_map.enemy_outside_index,
 		"player": {"hp": _player_hp, "block": _player_block, "cell": _battle_map.player_cell, "statuses": player_statuses, "visual": {"hat_lost": _player_hat_lost}},
 		"enemies": [{"id": PRIMARY_ENEMY_ID, "name": enemy_name, "hp": _enemy_hp, "cell": enemy_cell, "intent": _enemy_intent, "statuses": enemy_statuses}],
-		"slot": {"pools": _slot_pools, "last_roll": _slot_last_roll, "active_wheel": _slot_active_wheel, "is_resolving": _is_resolving_roll or _is_resolving_enemy},
+		"slot": {"pools": _slot_pools, "last_roll": _slot_last_roll, "active_wheel": _slot_active_wheel, "is_resolving": _is_resolving_roll or _is_resolving_enemy, "locked_wheels": _locked_wheels},
 		"movement": {"last_oob_attempt": _last_player_oob_attempt},
 		"input": {"locked": _is_resolving_roll or _is_resolving_enemy or _turn_flow.phase != "player", "stage": _input_stage},
 	})

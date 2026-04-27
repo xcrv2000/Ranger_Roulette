@@ -1,4 +1,4 @@
-[gd_resource type="Theme" format=3 uid="uid://dwmk2j6i5q4xj"]
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://dwmk2j6i5q4xj"]
 
 [ext_resource type="FontVariation" path="res://fonts/default_font_bold.tres" id="1"]
 

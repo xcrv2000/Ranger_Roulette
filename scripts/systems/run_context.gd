@@ -6,6 +6,7 @@ var max_hp: int = 50
 var hp: int = 50
 var quick_mode_level: int = 0
 var slot_wheels: Array = []
+var locked_wheels: Array[bool] = []
 var hat_lost: bool = false
 var next_battle_start_block: int = 0
 var seen_event_ids: Array[String] = []
@@ -22,7 +23,29 @@ func reset() -> void:
 		PackedStringArray(["attack", "attack", "attack", "defend"]),
 		PackedStringArray(["attack", "attack", "defend", "defend"]),
 		PackedStringArray(["attack", "defend", "defend", "defend"]),
+		PackedStringArray(["attack", "attack", "attack", "attack"]),
 	]
+	locked_wheels = [false, false, false, true]
+
+func get_locked_wheels_snapshot() -> Array:
+	return locked_wheels.duplicate()
+
+func is_wheel_locked(wheel_index: int) -> bool:
+	if wheel_index < 0 or wheel_index >= locked_wheels.size():
+		return false
+	return bool(locked_wheels[wheel_index])
+
+func set_wheel_locked(wheel_index: int, locked: bool) -> void:
+	if wheel_index < 0:
+		return
+	while locked_wheels.size() <= wheel_index:
+		locked_wheels.append(false)
+	locked_wheels[wheel_index] = locked
+
+func set_locked_wheels(values: Array) -> void:
+	locked_wheels = []
+	for v in values:
+		locked_wheels.append(bool(v))
 
 func add_gold(amount: int) -> void:
 	gold = max(0, gold + amount)
@@ -46,6 +69,8 @@ func add_card_to_wheel(card_id: String, wheel_index: int) -> bool:
 		return false
 	if wheel_index < 0 or wheel_index >= slot_wheels.size():
 		return false
+	if is_wheel_locked(wheel_index):
+		return false
 	var last_wheel_index := slot_wheels.size() - 1
 	var db := CardDatabase.load_default()
 	var def := db.get_card(card_id)
@@ -61,6 +86,8 @@ func insert_card_to_wheel(card_id: String, wheel_index: int, entry_index: int, i
 	if card_id.is_empty():
 		return false
 	if wheel_index < 0 or wheel_index >= slot_wheels.size():
+		return false
+	if is_wheel_locked(wheel_index):
 		return false
 	if not ignore_constraints:
 		var last_wheel_index := slot_wheels.size() - 1
@@ -84,6 +111,8 @@ func insert_card_to_wheel(card_id: String, wheel_index: int, entry_index: int, i
 
 func remove_card_from_wheel(wheel_index: int, entry_index: int) -> bool:
 	if wheel_index < 0 or wheel_index >= slot_wheels.size():
+		return false
+	if is_wheel_locked(wheel_index):
 		return false
 	var w = slot_wheels[wheel_index]
 	if entry_index < 0 or entry_index >= w.size():

@@ -15,14 +15,23 @@ const NODE_ELITE := "elite"
 const NODES_PER_FLOOR := 17
 const FLOOR_COUNT := 3
 
+const _EVENT_DB_SCRIPT := preload("res://scripts/systems/event_database.gd")
+const _ENEMY_DB_SCRIPT := preload("res://scripts/systems/enemy_database.gd")
+
+var _rng := RandomNumberGenerator.new()
+var _event_db: RefCounted
+var _enemy_db: RefCounted
+
 var nodes: Array[Dictionary] = []
 var current_index: int = 0
 var selected_index: int = 0
 
 func setup_fixed_route() -> void:
 	nodes = []
+	_rng.randomize()
 	for f in range(FLOOR_COUNT):
 		nodes.append_array(_build_floor_nodes(f))
+	_preplan_route()
 	current_index = 0
 	selected_index = 0
 	_emit_selection()
@@ -147,3 +156,88 @@ func _emit_selection() -> void:
 	if nodes.is_empty():
 		return
 	selection_changed.emit(nodes[selected_index], selected_index, current_index)
+
+func debug_jump_to(floor_number: int, node_number_in_floor: int) -> void:
+	if nodes.is_empty():
+		return
+	var f := clampi(floor_number - 1, 0, FLOOR_COUNT - 1)
+	var n := clampi(node_number_in_floor - 1, 0, NODES_PER_FLOOR - 1)
+	var idx := clampi(f * NODES_PER_FLOOR + n, 0, get_last_index())
+	current_index = idx
+	selected_index = idx
+	_emit_selection()
+
+func find_next_index(from_index: int, types: Array[String]) -> int:
+	if nodes.is_empty():
+		return -1
+	var start := clampi(from_index, 0, get_last_index())
+	for i in range(start, get_last_index() + 1):
+		var node: Dictionary = nodes[i]
+		var t := String(node.get("type", ""))
+		if types.has(t):
+			return i
+	return -1
+
+func set_node_event_id(global_index: int, event_id: String) -> void:
+	if global_index < 0 or global_index >= nodes.size():
+		return
+	var n: Dictionary = nodes[global_index].duplicate(true)
+	if event_id.is_empty():
+		n.erase("event_id")
+	else:
+		n["event_id"] = event_id
+	nodes[global_index] = n
+
+func set_node_enemy_id(global_index: int, enemy_id: String) -> void:
+	if global_index < 0 or global_index >= nodes.size():
+		return
+	var n: Dictionary = nodes[global_index].duplicate(true)
+	if enemy_id.is_empty():
+		n.erase("enemy_id")
+	else:
+		n["enemy_id"] = enemy_id
+	nodes[global_index] = n
+
+func _preplan_route() -> void:
+	if nodes.is_empty():
+		return
+	if not _event_db:
+		_event_db = _EVENT_DB_SCRIPT.new()
+		_event_db.load_from_path("res://data/events.json")
+	if not _enemy_db:
+		_enemy_db = _ENEMY_DB_SCRIPT.new()
+		_enemy_db.load_from_path("res://data/enemies.json")
+	var planned_seen_events: Array[String] = []
+	for i in range(nodes.size()):
+		var node: Dictionary = nodes[i].duplicate(true)
+		var t := String(node.get("type", ""))
+		if t == NODE_EVENT:
+			var pool := String(node.get("event_pool", "通用"))
+			var picked := _roll_event_id_from_pool(pool, planned_seen_events)
+			if not picked.is_empty():
+				node["event_id"] = picked
+				planned_seen_events.append(picked)
+		elif t == NODE_BATTLE or t == NODE_ELITE:
+			var pool := String(node.get("enemy_pool", ""))
+			var picked := ""
+			if not pool.is_empty() and _enemy_db:
+				picked = String(_enemy_db.roll_enemy_id(pool, _rng))
+			node["enemy_id"] = picked if not picked.is_empty() else "dummy"
+		elif t == NODE_BOSS:
+			node["enemy_id"] = "dummy_boss"
+		nodes[i] = node
+
+func _roll_event_id_from_pool(pool: String, seen: Array[String]) -> String:
+	if not _event_db:
+		return ""
+	var ids: Array[String] = []
+	for id in _event_db.get_all_ids():
+		var e: Dictionary = _event_db.get_event(id)
+		if String(e.get("random_pool", "通用")) != pool:
+			continue
+		if seen.has(String(id)):
+			continue
+		ids.append(String(id))
+	if ids.is_empty():
+		return ""
+	return String(ids[_rng.randi_range(0, ids.size() - 1)])
