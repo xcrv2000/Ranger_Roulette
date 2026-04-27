@@ -24,22 +24,25 @@
         width: 100vw;
         height: 100vh;
         height: 100dvh;
-        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       #container {
-        width: 720px;
-        height: 1280px;
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform-origin: 0 0;
+        aspect-ratio: 720 / 1280;
+        height: 100vh;
+        max-height: 100vh;
+        height: 100dvh;
+        max-height: 100dvh;
+        max-width: 100vw;
+        width: auto;
       }
 
       #canvas {
         display: block;
-        width: 100%;
-        height: 100%;
+        width: 100% !important;
+        height: 100% !important;
         outline: none;
       }
     </style>
@@ -51,24 +54,6 @@
     <script src="$GODOT_URL"></script>
     <script>
       const canvas = document.getElementById("canvas");
-      const baseWidth = 720;
-      const baseHeight = 1280;
-      const container = document.getElementById("container");
-
-      function resize() {
-        const vw = window.innerWidth;
-        const vh = window.innerHeight;
-        const scale = Math.min(vw / baseWidth, vh / baseHeight);
-
-        container.style.transform = `translate(-50%, -50%) scale(${scale})`;
-      }
-
-      resize();
-      window.addEventListener("resize", resize);
-      if (window.visualViewport) {
-        window.visualViewport.addEventListener("resize", resize);
-      }
-
       const engine = new Engine($GODOT_CONFIG);
       engine.startGame({
         canvas,

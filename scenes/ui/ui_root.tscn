@@ -1,12 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://c23p0g67nlq65"]
+[gd_scene format=3]
 
-[ext_resource type="Texture2D" uid="uid://bi7cl71e7nqmx" path="res://设计方案/pics/drafts/界面排版.png" id="1"]
-[ext_resource type="Texture2D" uid="uid://bq4sov8hgp6bl" path="res://icon.svg" id="2"]
-[ext_resource type="Texture2D" uid="uid://dcbnjvx8cb3ee" path="res://设计方案/pics/drafts/角色草稿.png" id="3"]
-[ext_resource type="Texture2D" uid="uid://c0co7jad3wrtu" path="res://设计方案/pics/边框（1080p-720p）.png" id="4"]
-[ext_resource type="Texture2D" uid="uid://cqf0twywfikas" path="res://设计方案/pics/老虎机后面板.png" id="5"]
-[ext_resource type="Texture2D" uid="uid://l8oplv1ky7ri" path="res://设计方案/pics/弹匣.png" id="7"]
-[ext_resource type="Texture2D" uid="uid://dx84527j8jigf" path="res://设计方案/pics/锁定弹匣.png" id="8"]
+[ext_resource type="Texture2D" path="res://设计方案/界面布局.png" id="1"]
+[ext_resource type="Texture2D" path="res://icon.svg" id="2"]
+[ext_resource type="Texture2D" path="res://设计方案/角色草稿.png" id="3"]
 
 [node name="UIRoot" type="Control"]
 layout_mode = 3
@@ -16,179 +12,74 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="EventOptionAnchor" type="Control" parent="."]
-visible = false
-z_index = 50
-anchors_preset = 0
-offset_left = 497.0
-offset_top = 646.0
-offset_right = 637.0
-offset_bottom = 702.0
-
-[node name="EventTextAnchor" type="Control" parent="."]
-visible = false
-z_index = 50
-anchors_preset = 0
-offset_left = 250.0
-offset_top = 421.0
-offset_right = 470.0
-offset_bottom = 501.0
-
-[node name="EventLayer" type="Control" parent="."]
-visible = false
-z_index = 150
-z_as_relative = false
+[node name="LayoutGuide" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 1
-
-[node name="EventText" type="RichTextLabel" parent="EventLayer"]
-layout_mode = 0
-fit_content = true
-scroll_active = false
-
-[node name="EventOptionLayer" type="Control" parent="."]
-top_level = true
-z_index = 1600
-z_as_relative = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="EventOptions" type="VBoxContainer" parent="EventOptionLayer"]
-visible = false
-layout_mode = 0
 mouse_filter = 2
-
-[node name="EventContinue" type="Button" parent="EventOptionLayer"]
-visible = false
-layout_mode = 0
-disabled = true
-text = "继续"
-
-[node name="LeaveButton" type="Button" parent="."]
-visible = false
-top_level = true
-z_index = 1100
-z_as_relative = false
-layout_mode = 0
-offset_left = 497.0
-offset_top = 646.0
-offset_right = 637.0
-offset_bottom = 702.0
-text = "离开"
-
-[node name="界面排版" type="TextureRect" parent="."]
-modulate = Color(1, 1, 1, 0.22)
-layout_mode = 0
-offset_left = -180.0
-offset_top = -320.0
-offset_right = 900.0
-offset_bottom = 1600.0
-mouse_filter = 0
 texture = ExtResource("1")
-stretch_mode = 5
-metadata/_edit_lock_ = true
-
-[node name="边框" type="TextureRect" parent="."]
-z_index = 1024
-z_as_relative = false
-layout_mode = 0
-offset_left = -180.0
-offset_top = -320.0
-offset_right = 900.0
-offset_bottom = 1600.0
-mouse_filter = 0
-texture = ExtResource("4")
+modulate = Color(1, 1, 1, 0.22)
 stretch_mode = 5
 
 [node name="HUD" type="Control" parent="."]
-z_as_relative = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 1
-
-[node name="TopBar" type="Control" parent="HUD"]
-z_index = 500
+z_index = 10
 z_as_relative = false
-anchors_preset = 0
-offset_top = 167.0
-offset_right = 720.0
-offset_bottom = 520.0
 
-[node name="DataBox" type="Control" parent="HUD/TopBar"]
-anchors_preset = 0
-offset_left = 103.0
-offset_right = 507.0
-offset_bottom = 64.0
+[node name="TopBar" type="HBoxContainer" parent="HUD"]
+layout_mode = 1
+anchors_preset = 10
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -340.0
+offset_right = 340.0
+offset_top = 16.0
+offset_bottom = 72.0
+
+[node name="DataBox" type="VBoxContainer" parent="HUD/TopBar"]
+layout_mode = 2
+theme_override_constants/separation = 0
 
 [node name="DataLabel" type="Label" parent="HUD/TopBar/DataBox"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
 text = "data"
 
-[node name="MoneyLabel" type="Label" parent="HUD/TopBar"]
-layout_mode = 0
-offset_left = 386.0
-offset_right = 630.0
-offset_bottom = 64.0
-text = "$ 0"
-horizontal_alignment = 2
-
-[node name="QuickToggle" type="Button" parent="HUD"]
-top_level = true
-z_index = 2000
-z_as_relative = false
-custom_minimum_size = Vector2(140, 56)
-layout_mode = 0
-offset_left = 92.0
-offset_top = 199.0
-offset_right = 232.0
-offset_bottom = 255.0
-scale = Vector2(0.7958043, 0.78791606)
-text = "快战:关"
-
-[node name="DebugEntry" type="Button" parent="HUD"]
-top_level = true
-z_index = 2000
-z_as_relative = false
-custom_minimum_size = Vector2(140, 56)
-layout_mode = 0
-offset_left = 92.0
-offset_top = 263.0
-offset_right = 232.0
-offset_bottom = 319.0
-scale = Vector2(0.7958043, 0.78791606)
+[node name="DebugEntry" type="Button" parent="HUD/TopBar/DataBox"]
+layout_mode = 2
 text = "调试"
+
+[node name="Spacer" type="Control" parent="HUD/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MoneyLabel" type="Label" parent="HUD/TopBar"]
+layout_mode = 2
+horizontal_alignment = 2
+text = "$ 0"
 
 [node name="DebugPanel" type="PanelContainer" parent="HUD"]
 visible = false
-top_level = true
-z_index = 1200
-z_as_relative = false
 layout_mode = 1
+anchors_preset = 0
 offset_left = 40.0
 offset_top = 90.0
 offset_right = 520.0
 offset_bottom = 520.0
+top_level = true
+z_as_relative = false
+z_index = 100
 
 [node name="Box" type="VBoxContainer" parent="HUD/DebugPanel"]
 layout_mode = 2
+alignment = 0
 
 [node name="Header" type="HBoxContainer" parent="HUD/DebugPanel/Box"]
 layout_mode = 2
@@ -229,7 +120,9 @@ text = "玩家HP"
 
 [node name="PlayerHP" type="SpinBox" parent="HUD/DebugPanel/Box/HPRow"]
 layout_mode = 2
+min_value = 0.0
 max_value = 999.0
+step = 1.0
 
 [node name="ApplyPlayerHP" type="Button" parent="HUD/DebugPanel/Box/HPRow"]
 layout_mode = 2
@@ -243,6 +136,7 @@ text = "敌人HP"
 layout_mode = 2
 min_value = -999.0
 max_value = 999.0
+step = 1.0
 
 [node name="ApplyEnemyHP" type="Button" parent="HUD/DebugPanel/Box/HPRow"]
 layout_mode = 2
@@ -262,6 +156,7 @@ layout_mode = 2
 layout_mode = 2
 min_value = -99.0
 max_value = 99.0
+step = 1.0
 value = 1.0
 
 [node name="AddPlayer" type="Button" parent="HUD/DebugPanel/Box/StatusRow"]
@@ -283,399 +178,136 @@ text = "清空玩家状态"
 layout_mode = 2
 text = "清空敌人状态"
 
-[node name="BottomBar" type="Control" parent="HUD"]
-z_index = 20
-z_as_relative = false
-anchors_preset = 0
-offset_top = 720.0
-offset_right = 720.0
-offset_bottom = 1280.0
+[node name="BottomBar" type="VBoxContainer" parent="HUD"]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -260.0
+grow_horizontal = 2
+grow_vertical = 0
+alignment = 1
 
-[node name="RelicRow" type="Control" parent="HUD/BottomBar"]
-anchors_preset = 0
-offset_right = 720.0
-offset_bottom = 560.0
+[node name="RelicRow" type="HBoxContainer" parent="HUD/BottomBar"]
+layout_mode = 2
+size_flags_horizontal = 3
 
-[node name="RelicCenter" type="Control" parent="HUD/BottomBar/RelicRow"]
-anchors_preset = 0
-offset_right = 720.0
-offset_bottom = 80.0
+[node name="QuickToggle" type="Button" parent="HUD/BottomBar/RelicRow"]
+layout_mode = 2
+text = "快战:关"
+
+[node name="RelicCenter" type="CenterContainer" parent="HUD/BottomBar/RelicRow"]
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="RelicLabel" type="Label" parent="HUD/BottomBar/RelicRow/RelicCenter"]
-layout_mode = 0
-offset_left = 220.0
-offset_top = 10.0
-offset_right = 500.0
-offset_bottom = 40.0
+layout_mode = 2
+horizontal_alignment = 1
 text = "relic"
-horizontal_alignment = 1
 
-[node name="SlotBackPanel" type="TextureRect" parent="HUD/BottomBar"]
-layout_mode = 0
-offset_left = -144.0
-offset_top = -1044.0
-offset_right = 936.0
-offset_bottom = 876.0
-scale = Vector2(0.93291324, 1.0046431)
-mouse_filter = 2
-texture = ExtResource("5")
-stretch_mode = 5
-
-[node name="InventoryPlaceholders" type="Control" parent="HUD/BottomBar"]
-anchors_preset = 0
-offset_left = 148.0
-offset_top = 5.0
-offset_right = 868.0
-offset_bottom = 325.0
-scale = Vector2(0.6044787, 1.0691807)
-mouse_filter = 2
-
-[node name="RelicHint" type="ColorRect" parent="HUD/BottomBar/InventoryPlaceholders"]
-layout_mode = 0
-offset_left = 24.814764
-offset_top = 38.34711
-offset_right = 696.81476
-offset_bottom = 76.34711
-scale = Vector2(0.9757178, 0.9036405)
-mouse_filter = 2
-color = Color(0.42, 0.85, 0.87, 0.45)
-
-[node name="RelicHintLabel" type="Label" parent="HUD/BottomBar/InventoryPlaceholders/RelicHint"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "饰品区（占位）"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="UnlockHint" type="ColorRect" parent="HUD/BottomBar/InventoryPlaceholders"]
-layout_mode = 0
-offset_left = 19.85181
-offset_top = 99.14133
-offset_right = 175.8518
-offset_bottom = 177.14133
-mouse_filter = 2
-color = Color(0.32, 0.74, 0.45, 0.45)
-
-[node name="UnlockHintLabel" type="Label" parent="HUD/BottomBar/InventoryPlaceholders/UnlockHint"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "解锁4号弹匣"
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 2
-
-[node name="ConsumableRow" type="Control" parent="HUD/BottomBar/InventoryPlaceholders"]
-anchors_preset = 0
-offset_left = 46.3209
-offset_top = 268.42984
-offset_right = 718.3209
-offset_bottom = 324.42984
-scale = Vector2(0.93167275, 0.74903816)
-
-[node name="SetHint" type="ColorRect" parent="HUD/BottomBar/InventoryPlaceholders/ConsumableRow"]
-custom_minimum_size = Vector2(140, 56)
-layout_mode = 0
-offset_right = 140.0
-offset_bottom = 56.0
-mouse_filter = 2
-color = Color(0.36, 0.49, 0.9, 0.5)
-
-[node name="SetHintLabel" type="Label" parent="HUD/BottomBar/InventoryPlaceholders/ConsumableRow/SetHint"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "背包 1"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Consumable1" type="ColorRect" parent="HUD/BottomBar/InventoryPlaceholders/ConsumableRow"]
-custom_minimum_size = Vector2(160, 56)
-layout_mode = 0
-offset_left = 152.0
-offset_right = 312.0
-offset_bottom = 56.0
-mouse_filter = 2
-color = Color(0.3, 0.95, 0.84, 0.45)
-
-[node name="ConsumableLabel1" type="Label" parent="HUD/BottomBar/InventoryPlaceholders/ConsumableRow/Consumable1"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "背包 2"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Consumable2" type="ColorRect" parent="HUD/BottomBar/InventoryPlaceholders/ConsumableRow"]
-custom_minimum_size = Vector2(160, 56)
-layout_mode = 0
-offset_left = 324.0
-offset_right = 484.0
-offset_bottom = 56.0
-mouse_filter = 2
-color = Color(0.3, 0.95, 0.84, 0.45)
-
-[node name="ConsumableLabel2" type="Label" parent="HUD/BottomBar/InventoryPlaceholders/ConsumableRow/Consumable2"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "背包 3"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Consumable3" type="ColorRect" parent="HUD/BottomBar/InventoryPlaceholders/ConsumableRow"]
-custom_minimum_size = Vector2(160, 56)
-layout_mode = 0
-offset_left = 496.0
-offset_right = 656.0
-offset_bottom = 56.0
-mouse_filter = 2
-color = Color(0.3, 0.95, 0.84, 0.45)
-
-[node name="ConsumableLabel3" type="Label" parent="HUD/BottomBar/InventoryPlaceholders/ConsumableRow/Consumable3"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "背包 4"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="SlotBar" type="Control" parent="HUD/BottomBar"]
-z_index = 1
-anchors_preset = 0
-offset_left = 156.0
-offset_top = 90.0
-offset_right = 748.0
-offset_bottom = 302.0
-scale = Vector2(0.69279176, 0.7596843)
-
-[node name="Slot1" type="PanelContainer" parent="HUD/BottomBar/SlotBar"]
-custom_minimum_size = Vector2(136, 212)
-layout_mode = 0
-offset_right = 136.0
-offset_bottom = 212.0
-
-[node name="MagazineArt" type="TextureRect" parent="HUD/BottomBar/SlotBar/Slot1"]
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("7")
-stretch_mode = 5
-
-[node name="LockedMagazine" type="TextureRect" parent="HUD/BottomBar/SlotBar/Slot1"]
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("8")
-stretch_mode = 5
-
-[node name="BulletPreview" type="HBoxContainer" parent="HUD/BottomBar/SlotBar/Slot1"]
+[node name="SlotBar" type="HBoxContainer" parent="HUD/BottomBar"]
 layout_mode = 2
 alignment = 1
 
-[node name="Icon" type="TextureRect" parent="HUD/BottomBar/SlotBar/Slot1/BulletPreview"]
-custom_minimum_size = Vector2(16, 16)
+[node name="Slot1" type="PanelContainer" parent="HUD/BottomBar/SlotBar"]
 layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("2")
-expand_mode = 1
-stretch_mode = 5
+custom_minimum_size = Vector2(160, 120)
 
 [node name="Label" type="Label" parent="HUD/BottomBar/SlotBar/Slot1"]
 layout_mode = 2
-text = "slot 1"
 horizontal_alignment = 1
 vertical_alignment = 1
+text = "slot 1"
 
 [node name="Slot2" type="PanelContainer" parent="HUD/BottomBar/SlotBar"]
-custom_minimum_size = Vector2(136, 212)
-layout_mode = 0
-offset_left = 144.0
-offset_right = 280.0
-offset_bottom = 212.0
-
-[node name="MagazineArt" type="TextureRect" parent="HUD/BottomBar/SlotBar/Slot2"]
 layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("7")
-stretch_mode = 5
-
-[node name="LockedMagazine" type="TextureRect" parent="HUD/BottomBar/SlotBar/Slot2"]
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("8")
-stretch_mode = 5
-
-[node name="BulletPreview" type="HBoxContainer" parent="HUD/BottomBar/SlotBar/Slot2"]
-layout_mode = 2
-alignment = 1
-
-[node name="Icon" type="TextureRect" parent="HUD/BottomBar/SlotBar/Slot2/BulletPreview"]
-custom_minimum_size = Vector2(16, 16)
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("2")
-expand_mode = 1
-stretch_mode = 5
+custom_minimum_size = Vector2(160, 120)
 
 [node name="Label" type="Label" parent="HUD/BottomBar/SlotBar/Slot2"]
 layout_mode = 2
-text = "slot 2"
 horizontal_alignment = 1
 vertical_alignment = 1
+text = "slot 2"
 
 [node name="Slot3" type="PanelContainer" parent="HUD/BottomBar/SlotBar"]
-custom_minimum_size = Vector2(136, 212)
-layout_mode = 0
-offset_left = 288.0
-offset_right = 424.0
-offset_bottom = 212.0
-
-[node name="MagazineArt" type="TextureRect" parent="HUD/BottomBar/SlotBar/Slot3"]
 layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("7")
-stretch_mode = 5
-
-[node name="LockedMagazine" type="TextureRect" parent="HUD/BottomBar/SlotBar/Slot3"]
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("8")
-stretch_mode = 5
-
-[node name="BulletPreview" type="HBoxContainer" parent="HUD/BottomBar/SlotBar/Slot3"]
-layout_mode = 2
-alignment = 1
-
-[node name="Icon" type="TextureRect" parent="HUD/BottomBar/SlotBar/Slot3/BulletPreview"]
-custom_minimum_size = Vector2(16, 16)
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("2")
-expand_mode = 1
-stretch_mode = 5
+custom_minimum_size = Vector2(160, 120)
 
 [node name="Label" type="Label" parent="HUD/BottomBar/SlotBar/Slot3"]
 layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
 text = "slot 3"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Slot4" type="PanelContainer" parent="HUD/BottomBar/SlotBar"]
-custom_minimum_size = Vector2(136, 212)
-layout_mode = 0
-offset_left = 432.0
-offset_right = 568.0
-offset_bottom = 212.0
-
-[node name="MagazineArt" type="TextureRect" parent="HUD/BottomBar/SlotBar/Slot4"]
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("7")
-stretch_mode = 5
-
-[node name="LockedMagazine" type="TextureRect" parent="HUD/BottomBar/SlotBar/Slot4"]
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("8")
-stretch_mode = 5
-
-[node name="BulletPreview" type="HBoxContainer" parent="HUD/BottomBar/SlotBar/Slot4"]
-layout_mode = 2
-alignment = 1
-
-[node name="Icon" type="TextureRect" parent="HUD/BottomBar/SlotBar/Slot4/BulletPreview"]
-custom_minimum_size = Vector2(16, 16)
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("2")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Label" type="Label" parent="HUD/BottomBar/SlotBar/Slot4"]
-layout_mode = 2
-text = "slot 4"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="NodePanel" type="Control" parent="."]
-z_index = 40
-z_as_relative = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 1
+mouse_filter = 2
 
-[node name="MapArea" type="Control" parent="NodePanel"]
-anchors_preset = 0
-offset_top = 132.0
-offset_right = 720.0
-offset_bottom = 300.0
+[node name="MapArea" type="VBoxContainer" parent="NodePanel"]
+layout_mode = 1
+anchors_preset = 10
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -340.0
+offset_right = 340.0
+offset_top = 92.0
+offset_bottom = 240.0
+alignment = 1
 
 [node name="MapTitle" type="Label" parent="NodePanel/MapArea"]
-layout_mode = 0
-offset_right = 720.0
-offset_bottom = 36.0
-mouse_filter = 0
-text = "map"
+layout_mode = 2
 horizontal_alignment = 1
+text = "map"
 
 [node name="MapBar" type="HBoxContainer" parent="NodePanel/MapArea"]
-layout_mode = 0
-offset_top = 44.0
-offset_right = 720.0
-offset_bottom = 124.0
-mouse_filter = 0
+layout_mode = 2
 alignment = 1
 
 [node name="PrevButton" type="Button" parent="NodePanel/MapArea/MapBar"]
 layout_mode = 2
-disabled = true
 text = "<"
 
-[node name="NodesViewport" type="Control" parent="NodePanel/MapArea/MapBar"]
-clip_contents = true
-custom_minimum_size = Vector2(560, 64)
+[node name="Nodes" type="HBoxContainer" parent="NodePanel/MapArea/MapBar"]
 layout_mode = 2
-size_flags_horizontal = 3
+alignment = 1
 
-[node name="NodesRow" type="HBoxContainer" parent="NodePanel/MapArea/MapBar/NodesViewport"]
-layout_mode = 0
-mouse_filter = 0
+[node name="Node0" type="Button" parent="NodePanel/MapArea/MapBar/Nodes"]
+layout_mode = 2
+custom_minimum_size = Vector2(120, 0)
+text = "1"
+
+[node name="Node1" type="Button" parent="NodePanel/MapArea/MapBar/Nodes"]
+layout_mode = 2
+custom_minimum_size = Vector2(120, 0)
+text = "2"
+
+[node name="Node2" type="Button" parent="NodePanel/MapArea/MapBar/Nodes"]
+layout_mode = 2
+custom_minimum_size = Vector2(120, 0)
+text = "3"
+
+[node name="Node3" type="Button" parent="NodePanel/MapArea/MapBar/Nodes"]
+layout_mode = 2
+custom_minimum_size = Vector2(120, 0)
+text = "4"
+
+[node name="Node4" type="Button" parent="NodePanel/MapArea/MapBar/Nodes"]
+layout_mode = 2
+custom_minimum_size = Vector2(120, 0)
+text = "5"
 
 [node name="NextButton" type="Button" parent="NodePanel/MapArea/MapBar"]
 layout_mode = 2
-disabled = true
 text = ">"
 
 [node name="EnterNodeButton" type="Button" parent="NodePanel/MapArea"]
-visible = false
-layout_mode = 0
-offset_left = 260.0
-offset_top = 106.0
-offset_right = 460.0
-offset_bottom = 150.0
-disabled = true
+layout_mode = 2
 text = "进入节点"
 
 [node name="StageArea" type="PanelContainer" parent="NodePanel"]
@@ -683,24 +315,29 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 320.0
-offset_bottom = -480.0
+offset_top = 260.0
+offset_bottom = -280.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Box" type="VBoxContainer" parent="NodePanel/StageArea"]
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 alignment = 1
 
 [node name="StageLabel" type="Label" parent="NodePanel/StageArea/Box"]
 layout_mode = 2
-text = "地图 / 场景（占位）"
 horizontal_alignment = 1
+text = "地图 / 场景（占位）"
 
 [node name="NodeArt" type="TextureRect" parent="NodePanel/StageArea/Box"]
-custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
-mouse_filter = 0
+custom_minimum_size = Vector2(0, 96)
+mouse_filter = 2
 texture = ExtResource("2")
 stretch_mode = 5
 
@@ -711,16 +348,16 @@ alignment = 1
 
 [node name="StatusLabel" type="Label" parent="NodePanel/StageArea/Box/BattlePanel"]
 layout_mode = 2
-text = "battle"
 horizontal_alignment = 1
+text = "battle"
 
 [node name="Lane" type="HBoxContainer" parent="NodePanel/StageArea/Box/BattlePanel"]
 layout_mode = 2
 alignment = 1
 
 [node name="Cell1" type="PanelContainer" parent="NodePanel/StageArea/Box/BattlePanel/Lane"]
-custom_minimum_size = Vector2(72, 72)
 layout_mode = 2
+custom_minimum_size = Vector2(72, 72)
 
 [node name="Box" type="VBoxContainer" parent="NodePanel/StageArea/Box/BattlePanel/Lane/Cell1"]
 layout_mode = 2
@@ -728,15 +365,15 @@ alignment = 1
 
 [node name="IndexLabel" type="Label" parent="NodePanel/StageArea/Box/BattlePanel/Lane/Cell1/Box"]
 layout_mode = 2
-text = "1"
 horizontal_alignment = 1
+text = "1"
 
 [node name="Slot" type="CenterContainer" parent="NodePanel/StageArea/Box/BattlePanel/Lane/Cell1/Box"]
 layout_mode = 2
 
 [node name="Cell2" type="PanelContainer" parent="NodePanel/StageArea/Box/BattlePanel/Lane"]
-custom_minimum_size = Vector2(72, 72)
 layout_mode = 2
+custom_minimum_size = Vector2(72, 72)
 
 [node name="Box" type="VBoxContainer" parent="NodePanel/StageArea/Box/BattlePanel/Lane/Cell2"]
 layout_mode = 2
@@ -744,15 +381,15 @@ alignment = 1
 
 [node name="IndexLabel" type="Label" parent="NodePanel/StageArea/Box/BattlePanel/Lane/Cell2/Box"]
 layout_mode = 2
-text = "2"
 horizontal_alignment = 1
+text = "2"
 
 [node name="Slot" type="CenterContainer" parent="NodePanel/StageArea/Box/BattlePanel/Lane/Cell2/Box"]
 layout_mode = 2
 
 [node name="Cell3" type="PanelContainer" parent="NodePanel/StageArea/Box/BattlePanel/Lane"]
-custom_minimum_size = Vector2(72, 72)
 layout_mode = 2
+custom_minimum_size = Vector2(72, 72)
 
 [node name="Box" type="VBoxContainer" parent="NodePanel/StageArea/Box/BattlePanel/Lane/Cell3"]
 layout_mode = 2
@@ -760,15 +397,15 @@ alignment = 1
 
 [node name="IndexLabel" type="Label" parent="NodePanel/StageArea/Box/BattlePanel/Lane/Cell3/Box"]
 layout_mode = 2
-text = "3"
 horizontal_alignment = 1
+text = "3"
 
 [node name="Slot" type="CenterContainer" parent="NodePanel/StageArea/Box/BattlePanel/Lane/Cell3/Box"]
 layout_mode = 2
 
 [node name="Cell4" type="PanelContainer" parent="NodePanel/StageArea/Box/BattlePanel/Lane"]
-custom_minimum_size = Vector2(72, 72)
 layout_mode = 2
+custom_minimum_size = Vector2(72, 72)
 
 [node name="Box" type="VBoxContainer" parent="NodePanel/StageArea/Box/BattlePanel/Lane/Cell4"]
 layout_mode = 2
@@ -776,15 +413,15 @@ alignment = 1
 
 [node name="IndexLabel" type="Label" parent="NodePanel/StageArea/Box/BattlePanel/Lane/Cell4/Box"]
 layout_mode = 2
-text = "4"
 horizontal_alignment = 1
+text = "4"
 
 [node name="Slot" type="CenterContainer" parent="NodePanel/StageArea/Box/BattlePanel/Lane/Cell4/Box"]
 layout_mode = 2
 
 [node name="Cell5" type="PanelContainer" parent="NodePanel/StageArea/Box/BattlePanel/Lane"]
-custom_minimum_size = Vector2(72, 72)
 layout_mode = 2
+custom_minimum_size = Vector2(72, 72)
 
 [node name="Box" type="VBoxContainer" parent="NodePanel/StageArea/Box/BattlePanel/Lane/Cell5"]
 layout_mode = 2
@@ -792,15 +429,15 @@ alignment = 1
 
 [node name="IndexLabel" type="Label" parent="NodePanel/StageArea/Box/BattlePanel/Lane/Cell5/Box"]
 layout_mode = 2
-text = "5"
 horizontal_alignment = 1
+text = "5"
 
 [node name="Slot" type="CenterContainer" parent="NodePanel/StageArea/Box/BattlePanel/Lane/Cell5/Box"]
 layout_mode = 2
 
 [node name="Cell6" type="PanelContainer" parent="NodePanel/StageArea/Box/BattlePanel/Lane"]
-custom_minimum_size = Vector2(72, 72)
 layout_mode = 2
+custom_minimum_size = Vector2(72, 72)
 
 [node name="Box" type="VBoxContainer" parent="NodePanel/StageArea/Box/BattlePanel/Lane/Cell6"]
 layout_mode = 2
@@ -808,15 +445,15 @@ alignment = 1
 
 [node name="IndexLabel" type="Label" parent="NodePanel/StageArea/Box/BattlePanel/Lane/Cell6/Box"]
 layout_mode = 2
-text = "6"
 horizontal_alignment = 1
+text = "6"
 
 [node name="Slot" type="CenterContainer" parent="NodePanel/StageArea/Box/BattlePanel/Lane/Cell6/Box"]
 layout_mode = 2
 
 [node name="Cell7" type="PanelContainer" parent="NodePanel/StageArea/Box/BattlePanel/Lane"]
-custom_minimum_size = Vector2(72, 72)
 layout_mode = 2
+custom_minimum_size = Vector2(72, 72)
 
 [node name="Box" type="VBoxContainer" parent="NodePanel/StageArea/Box/BattlePanel/Lane/Cell7"]
 layout_mode = 2
@@ -824,15 +461,15 @@ alignment = 1
 
 [node name="IndexLabel" type="Label" parent="NodePanel/StageArea/Box/BattlePanel/Lane/Cell7/Box"]
 layout_mode = 2
-text = "7"
 horizontal_alignment = 1
+text = "7"
 
 [node name="Slot" type="CenterContainer" parent="NodePanel/StageArea/Box/BattlePanel/Lane/Cell7/Box"]
 layout_mode = 2
 
 [node name="Cell8" type="PanelContainer" parent="NodePanel/StageArea/Box/BattlePanel/Lane"]
-custom_minimum_size = Vector2(72, 72)
 layout_mode = 2
+custom_minimum_size = Vector2(72, 72)
 
 [node name="Box" type="VBoxContainer" parent="NodePanel/StageArea/Box/BattlePanel/Lane/Cell8"]
 layout_mode = 2
@@ -840,20 +477,18 @@ alignment = 1
 
 [node name="IndexLabel" type="Label" parent="NodePanel/StageArea/Box/BattlePanel/Lane/Cell8/Box"]
 layout_mode = 2
-text = "8"
 horizontal_alignment = 1
+text = "8"
 
 [node name="Slot" type="CenterContainer" parent="NodePanel/StageArea/Box/BattlePanel/Lane/Cell8/Box"]
 layout_mode = 2
 
 [node name="EnemyToken" type="Label" parent="NodePanel/StageArea/Box/BattlePanel/Lane/Cell8/Box/Slot"]
 layout_mode = 2
-text = "E"
 horizontal_alignment = 1
+text = "E"
 
 [node name="Actions" type="HBoxContainer" parent="NodePanel/StageArea/Box/BattlePanel"]
-z_index = 200
-z_as_relative = false
 layout_mode = 2
 alignment = 1
 
@@ -867,23 +502,26 @@ text = "防御"
 
 [node name="BattleOverlay" type="Control" parent="NodePanel/StageArea"]
 visible = false
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 
 [node name="PlayerToken" type="TextureRect" parent="NodePanel/StageArea/BattleOverlay"]
 layout_mode = 0
 offset_right = 96.0
 offset_bottom = 96.0
-scale = Vector2(0.38, 0.38)
 pivot_offset = Vector2(48, 48)
+scale = Vector2(0.38, 0.38)
 mouse_filter = 2
 texture = ExtResource("3")
 stretch_mode = 5
 
 [node name="RewardPanel" type="PanelContainer" parent="."]
 visible = false
-z_index = 50
-z_as_relative = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -894,8 +532,6 @@ offset_left = -240.0
 offset_top = -220.0
 offset_right = 240.0
 offset_bottom = 220.0
-grow_horizontal = 2
-grow_vertical = 2
 
 [node name="Box" type="VBoxContainer" parent="RewardPanel"]
 layout_mode = 2
@@ -903,21 +539,21 @@ alignment = 1
 
 [node name="TitleLabel" type="Label" parent="RewardPanel/Box"]
 layout_mode = 2
+horizontal_alignment = 1
 theme_override_font_sizes/font_size = 32
 text = "节点"
-horizontal_alignment = 1
 
 [node name="NodeArt" type="TextureRect" parent="RewardPanel/Box"]
-custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
-mouse_filter = 0
+custom_minimum_size = Vector2(0, 96)
+mouse_filter = 2
 texture = ExtResource("2")
 stretch_mode = 5
 
 [node name="BodyLabel" type="Label" parent="RewardPanel/Box"]
 layout_mode = 2
-text = "占位文本"
 horizontal_alignment = 1
+text = "占位文本"
 
 [node name="PrimaryButton" type="Button" parent="RewardPanel/Box"]
 layout_mode = 2
@@ -925,8 +561,6 @@ text = "继续"
 
 [node name="BattleRewardPanel" type="PanelContainer" parent="."]
 visible = false
-z_index = 50
-z_as_relative = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -937,8 +571,6 @@ offset_left = -300.0
 offset_top = -260.0
 offset_right = 300.0
 offset_bottom = 260.0
-grow_horizontal = 2
-grow_vertical = 2
 
 [node name="Box" type="VBoxContainer" parent="BattleRewardPanel"]
 layout_mode = 2
@@ -946,50 +578,64 @@ alignment = 1
 
 [node name="TitleLabel" type="Label" parent="BattleRewardPanel/Box"]
 layout_mode = 2
+horizontal_alignment = 1
 theme_override_font_sizes/font_size = 32
 text = "战利品"
-horizontal_alignment = 1
 
 [node name="GoldLabel" type="Label" parent="BattleRewardPanel/Box"]
 layout_mode = 2
-text = "+0 金币"
 horizontal_alignment = 1
+text = "+0 金币"
 
 [node name="CardRow" type="HBoxContainer" parent="BattleRewardPanel/Box"]
 layout_mode = 2
 alignment = 1
 
 [node name="Card0" type="Button" parent="BattleRewardPanel/Box/CardRow"]
-custom_minimum_size = Vector2(160, 120)
 layout_mode = 2
-text = "卡1"
+custom_minimum_size = Vector2(160, 120)
 icon = ExtResource("2")
 expand_icon = true
+text = "卡1"
 
 [node name="Card1" type="Button" parent="BattleRewardPanel/Box/CardRow"]
-custom_minimum_size = Vector2(160, 120)
 layout_mode = 2
-text = "卡2"
+custom_minimum_size = Vector2(160, 120)
 icon = ExtResource("2")
 expand_icon = true
+text = "卡2"
 
 [node name="Card2" type="Button" parent="BattleRewardPanel/Box/CardRow"]
-custom_minimum_size = Vector2(160, 120)
 layout_mode = 2
-text = "卡3"
+custom_minimum_size = Vector2(160, 120)
 icon = ExtResource("2")
 expand_icon = true
+text = "卡3"
 
 [node name="SkipButton" type="Button" parent="BattleRewardPanel"]
+layout_mode = 1
 top_level = true
-z_index = 20
 z_as_relative = false
-layout_mode = 2
+z_index = 20
+anchors_preset = 0
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_top = 0.66
+anchor_bottom = 0.66
+offset_left = -140.0
+offset_top = -20.0
+offset_right = -24.0
+offset_bottom = 20.0
 text = "跳过"
 
 [node name="DetailLayer" type="Control" parent="BattleRewardPanel"]
 visible = false
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Backdrop" type="Button" parent="BattleRewardPanel/DetailLayer"]
 layout_mode = 1
@@ -998,6 +644,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+text = ""
 
 [node name="DetailPanel" type="PanelContainer" parent="BattleRewardPanel/DetailLayer"]
 layout_mode = 1
@@ -1010,29 +657,27 @@ offset_left = -220.0
 offset_top = -200.0
 offset_right = 220.0
 offset_bottom = 200.0
-grow_horizontal = 2
-grow_vertical = 2
 
 [node name="Box" type="VBoxContainer" parent="BattleRewardPanel/DetailLayer/DetailPanel"]
 layout_mode = 2
 alignment = 1
 
 [node name="SelectedIcon" type="TextureRect" parent="BattleRewardPanel/DetailLayer/DetailPanel/Box"]
-custom_minimum_size = Vector2(0, 140)
 layout_mode = 2
-mouse_filter = 0
+custom_minimum_size = Vector2(0, 140)
+mouse_filter = 2
 texture = ExtResource("2")
 stretch_mode = 5
 
 [node name="NameLabel" type="Label" parent="BattleRewardPanel/DetailLayer/DetailPanel/Box"]
 layout_mode = 2
-text = "卡牌"
 horizontal_alignment = 1
+text = "卡牌"
 
 [node name="TextLabel" type="Label" parent="BattleRewardPanel/DetailLayer/DetailPanel/Box"]
 layout_mode = 2
-text = "效果"
 horizontal_alignment = 1
+text = "效果"
 
 [node name="SlotRow" type="HBoxContainer" parent="BattleRewardPanel/DetailLayer/DetailPanel/Box"]
 layout_mode = 2
@@ -1049,119 +694,3 @@ text = "加入轮2"
 [node name="Slot2" type="Button" parent="BattleRewardPanel/DetailLayer/DetailPanel/Box/SlotRow"]
 layout_mode = 2
 text = "加入轮3"
-
-[node name="ShopPanel" type="PanelContainer" parent="."]
-visible = false
-z_index = 55
-z_as_relative = false
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -300.0
-offset_top = -330.0
-offset_right = 300.0
-offset_bottom = 90.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Box" type="VBoxContainer" parent="ShopPanel"]
-layout_mode = 2
-alignment = 1
-
-[node name="TitleLabel" type="Label" parent="ShopPanel/Box"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 28
-text = "商店"
-horizontal_alignment = 1
-
-[node name="HintLabel" type="Label" parent="ShopPanel/Box"]
-layout_mode = 2
-horizontal_alignment = 1
-autowrap_mode = 2
-
-[node name="CardRow" type="HBoxContainer" parent="ShopPanel/Box"]
-layout_mode = 2
-alignment = 1
-
-[node name="Item0" type="VBoxContainer" parent="ShopPanel/Box/CardRow"]
-layout_mode = 2
-alignment = 1
-
-[node name="Card0" type="Button" parent="ShopPanel/Box/CardRow/Item0"]
-custom_minimum_size = Vector2(104, 96)
-layout_mode = 2
-text = "卡1"
-icon = ExtResource("2")
-expand_icon = true
-
-[node name="Price0" type="Label" parent="ShopPanel/Box/CardRow/Item0"]
-layout_mode = 2
-text = "$ 0"
-horizontal_alignment = 1
-
-[node name="Item1" type="VBoxContainer" parent="ShopPanel/Box/CardRow"]
-layout_mode = 2
-alignment = 1
-
-[node name="Card1" type="Button" parent="ShopPanel/Box/CardRow/Item1"]
-custom_minimum_size = Vector2(104, 96)
-layout_mode = 2
-text = "卡2"
-icon = ExtResource("2")
-expand_icon = true
-
-[node name="Price1" type="Label" parent="ShopPanel/Box/CardRow/Item1"]
-layout_mode = 2
-text = "$ 0"
-horizontal_alignment = 1
-
-[node name="Item2" type="VBoxContainer" parent="ShopPanel/Box/CardRow"]
-layout_mode = 2
-alignment = 1
-
-[node name="Card2" type="Button" parent="ShopPanel/Box/CardRow/Item2"]
-custom_minimum_size = Vector2(104, 96)
-layout_mode = 2
-text = "卡3"
-icon = ExtResource("2")
-expand_icon = true
-
-[node name="Price2" type="Label" parent="ShopPanel/Box/CardRow/Item2"]
-layout_mode = 2
-text = "$ 0"
-horizontal_alignment = 1
-
-[node name="Item3" type="VBoxContainer" parent="ShopPanel/Box/CardRow"]
-layout_mode = 2
-alignment = 1
-
-[node name="Card3" type="Button" parent="ShopPanel/Box/CardRow/Item3"]
-custom_minimum_size = Vector2(104, 96)
-layout_mode = 2
-text = "卡4"
-icon = ExtResource("2")
-expand_icon = true
-
-[node name="Price3" type="Label" parent="ShopPanel/Box/CardRow/Item3"]
-layout_mode = 2
-text = "$ 0"
-horizontal_alignment = 1
-
-[node name="Item4" type="VBoxContainer" parent="ShopPanel/Box/CardRow"]
-layout_mode = 2
-alignment = 1
-
-[node name="Card4" type="Button" parent="ShopPanel/Box/CardRow/Item4"]
-custom_minimum_size = Vector2(104, 96)
-layout_mode = 2
-text = "卡5"
-icon = ExtResource("2")
-expand_icon = true
-
-[node name="Price4" type="Label" parent="ShopPanel/Box/CardRow/Item4"]
-layout_mode = 2
-text = "$ 0"
-horizontal_alignment = 1
