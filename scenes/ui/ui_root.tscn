@@ -24,7 +24,6 @@ offset_left = 497.0
 offset_top = 646.0
 offset_right = 637.0
 offset_bottom = 702.0
-mouse_filter = 0
 
 [node name="EventTextAnchor" type="Control" parent="."]
 visible = false
@@ -34,7 +33,6 @@ offset_left = 250.0
 offset_top = 421.0
 offset_right = 470.0
 offset_bottom = 501.0
-mouse_filter = 0
 
 [node name="EventLayer" type="Control" parent="."]
 visible = false
@@ -50,11 +48,8 @@ mouse_filter = 1
 
 [node name="EventText" type="RichTextLabel" parent="EventLayer"]
 layout_mode = 0
-bbcode_enabled = false
 fit_content = true
 scroll_active = false
-autowrap_mode = 3
-mouse_filter = 0
 
 [node name="EventOptionLayer" type="Control" parent="."]
 top_level = true
@@ -66,7 +61,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 0
 
 [node name="EventOptions" type="VBoxContainer" parent="EventOptionLayer"]
 visible = false
@@ -858,10 +852,10 @@ text = "E"
 horizontal_alignment = 1
 
 [node name="Actions" type="HBoxContainer" parent="NodePanel/StageArea/Box/BattlePanel"]
-layout_mode = 2
-alignment = 1
 z_index = 200
 z_as_relative = false
+layout_mode = 2
+alignment = 1
 
 [node name="Action0" type="Button" parent="NodePanel/StageArea/Box/BattlePanel/Actions"]
 layout_mode = 2
