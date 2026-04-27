@@ -1810,6 +1810,15 @@ func _ensure_event_layer() -> void:
 		_event_layer.z_index = 150
 		_run_ui.add_child(_event_layer)
 	_event_layer.mouse_filter = Control.MOUSE_FILTER_PASS
+	var bg: ColorRect = _event_layer.get_node_or_null("EventBackground") as ColorRect
+	if not bg:
+		bg = ColorRect.new()
+		bg.name = "EventBackground"
+		bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_event_layer.add_child(bg)
+		_event_layer.move_child(bg, 0)
+	bg.color = Color8(152, 115, 185, 255)
 	if not _event_text:
 		_event_text = _event_layer.get_node_or_null("EventText") as RichTextLabel
 	if not _event_text:
