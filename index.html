@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,height=device-height,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"
+    />
+    <title>漫游轮盘</title>
+    <link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
+<link rel="apple-touch-icon" href="index.apple-touch-icon.png"/>
+
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        overflow: hidden;
+        touch-action: none;
+      }
+
+      body {
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+      }
+
+      #canvas {
+        display: block;
+        width: 100vw !important;
+        height: 100dvh !important;
+        outline: none;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <script src="index.js"></script>
+    <script>
+      const canvas = document.getElementById("canvas");
+      const engine = new Engine({"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":true,"fileSizes":{"index.pck":14948540,"index.wasm":38057390},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4});
+      engine.startGame({
+        canvas,
+      });
+    </script>
+  </body>
+</html>
+
