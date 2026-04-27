@@ -55,6 +55,8 @@ var _debug_clear_enemy: Button
 var _debug_run_state: Dictionary = {}
 var _active_run: RunContext
 
+const POPUP_BACKDROP_COLOR := Color8(152, 115, 185, 255)
+
 var _debug_tabs: TabContainer
 var _debug_wheel_tab: Control
 var _debug_wheel_select: OptionButton
@@ -534,6 +536,22 @@ func shop_show_hint(text: String) -> void:
 	if _shop_hint_label:
 		_shop_hint_label.text = text
 
+func reward_show_hint(text: String) -> void:
+	if not _reward_text_label:
+		return
+	var card_id := _reward_selected_card_id
+	if card_id.is_empty():
+		return
+	if not _card_db:
+		_card_db = CardDatabase.load_default()
+	var base_text := ""
+	if _card_db:
+		base_text = String(_card_db.get_card(card_id).get("text", ""))
+	if text.is_empty():
+		_reward_text_label.text = base_text
+	else:
+		_reward_text_label.text = base_text + "\n\n" + text
+
 func shop_set_leave_allowed(allowed: bool) -> void:
 	_leave_allowed = allowed
 	_refresh_leave_button()
@@ -620,7 +638,7 @@ func _ensure_reflection_layer() -> void:
 	_run_ui.add_child(_reflection_layer)
 
 	var backdrop := ColorRect.new()
-	backdrop.color = Color(0, 0, 0, 0.95)
+	backdrop.color = POPUP_BACKDROP_COLOR
 	backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_reflection_layer.add_child(backdrop)
 
@@ -1743,17 +1761,17 @@ func _render_event_reward_slot_buttons(card_id: String) -> void:
 	if _card_db:
 		constraints = _card_db.get_card(card_id).get("constraints", {})
 	var wheel_rule := String(constraints.get("wheel", ""))
-	var wheel_count: int = int(max(1, _last_wheel_count))
+	var wheel_count: int = int(max(0, _last_wheel_count))
 	var last_idx: int = wheel_count - 1
 	if _active_run:
-		while last_idx >= 0 and _active_run.is_wheel_locked(last_idx):
-			last_idx -= 1
+		wheel_count = int(_active_run.get_wheels_snapshot().size())
+		last_idx = _active_run.get_last_unlocked_wheel_index()
 	for i in range(wheel_count):
 		if _active_run and _active_run.is_wheel_locked(i):
 			continue
 		var b := Button.new()
 		b.text = "加入轮%d" % (i + 1)
-		if wheel_rule == "last" and i != last_idx:
+		if wheel_rule == "last" and (last_idx < 0 or i != last_idx):
 			b.disabled = true
 		var idx := i
 		b.pressed.connect(func() -> void:
@@ -1786,17 +1804,17 @@ func _render_reward_slot_buttons(card_id: String) -> void:
 	if _card_db:
 		constraints = _card_db.get_card(card_id).get("constraints", {})
 	var wheel_rule := String(constraints.get("wheel", ""))
-	var wheel_count: int = int(max(1, _last_wheel_count))
+	var wheel_count: int = int(max(0, _last_wheel_count))
 	var last_idx: int = wheel_count - 1
 	if _active_run:
-		while last_idx >= 0 and _active_run.is_wheel_locked(last_idx):
-			last_idx -= 1
+		wheel_count = int(_active_run.get_wheels_snapshot().size())
+		last_idx = _active_run.get_last_unlocked_wheel_index()
 	for i in range(wheel_count):
 		if _active_run and _active_run.is_wheel_locked(i):
 			continue
 		var b := Button.new()
 		b.text = "加入轮%d" % (i + 1)
-		if wheel_rule == "last" and i != last_idx:
+		if wheel_rule == "last" and (last_idx < 0 or i != last_idx):
 			b.disabled = true
 		var idx := i
 		b.pressed.connect(func() -> void:
@@ -1977,7 +1995,7 @@ func _ensure_slot_detail_layer() -> void:
 	backdrop.flat = true
 	backdrop.focus_mode = Control.FOCUS_NONE
 	backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
-	backdrop.modulate = Color(0, 0, 0, 0.95)
+	backdrop.modulate = POPUP_BACKDROP_COLOR
 	backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
 	backdrop.gui_input.connect(func(event: InputEvent) -> void:
 		if event is InputEventMouseButton:
@@ -2318,7 +2336,7 @@ func _ensure_rest_adjust_layer() -> void:
 	backdrop.flat = true
 	backdrop.focus_mode = Control.FOCUS_NONE
 	backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
-	backdrop.modulate = Color(0, 0, 0, 0.95)
+	backdrop.modulate = POPUP_BACKDROP_COLOR
 	backdrop.pressed.connect(func() -> void:
 		_hide_rest_adjust()
 		_show_rest_root_options_again()
@@ -2578,7 +2596,7 @@ func _ensure_event_remove_layer() -> void:
 	backdrop.flat = true
 	backdrop.focus_mode = Control.FOCUS_NONE
 	backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
-	backdrop.modulate = Color(0, 0, 0, 0.95)
+	backdrop.modulate = POPUP_BACKDROP_COLOR
 	backdrop.pressed.connect(func() -> void:
 		hide_event_remove_bullet()
 		event_remove_bullet_cancelled.emit()

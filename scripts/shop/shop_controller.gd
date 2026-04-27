@@ -138,16 +138,25 @@ func _on_event_add_to_wheel_selected(card_id: String, wheel_index: int) -> void:
 	if card_id != _pending_card_id:
 		return
 	var price := _pending_price
-	_pending_card_id = ""
-	_pending_price = 0
-	_ui.shop_set_leave_allowed(true)
 	if _run.gold < price:
+		_pending_card_id = ""
+		_pending_price = 0
+		_ui.shop_set_leave_allowed(true)
 		_ui.shop_show_hint("金币不足。")
 		_ui.refresh_shop(_cards, _run)
 		return
+	var err := _run.get_add_card_to_wheel_error(card_id, wheel_index)
+	if not err.is_empty():
+		_ui.shop_set_leave_allowed(false)
+		_ui.show_event_add_card_to_wheel(card_id, true)
+		if _ui.has_method("reward_show_hint"):
+			_ui.reward_show_hint(_wheel_add_error_to_text(err))
+		return
 	if not _run.add_card_to_wheel(card_id, wheel_index):
-		_ui.shop_show_hint("无法加入该弹匣。")
-		_ui.refresh_shop(_cards, _run)
+		_ui.shop_set_leave_allowed(false)
+		_ui.show_event_add_card_to_wheel(card_id, true)
+		if _ui.has_method("reward_show_hint"):
+			_ui.reward_show_hint(_wheel_add_error_to_text("unknown"))
 		return
 	_run.add_gold(-price)
 	_ui.set_header("data", _run.gold)
@@ -157,8 +166,20 @@ func _on_event_add_to_wheel_selected(card_id: String, wheel_index: int) -> void:
 			c["shop_sold"] = true
 			_cards[i] = c
 			break
+	_pending_card_id = ""
+	_pending_price = 0
+	_ui.shop_set_leave_allowed(true)
 	_ui.shop_show_hint("购买成功。")
 	_ui.refresh_shop(_cards, _run)
+
+func _wheel_add_error_to_text(err: String) -> String:
+	if err == "must_be_last_unlocked_wheel":
+		return "该子弹只能加入最后一个未锁定弹匣。"
+	if err == "wheel_locked":
+		return "该弹匣已锁定。"
+	if err == "no_unlocked_wheel":
+		return "没有可加入的弹匣。"
+	return "无法加入该弹匣。"
 
 func _on_event_add_to_wheel_cancelled() -> void:
 	if not _ui:
@@ -176,4 +197,3 @@ func _find_shop_entry(card_id: String) -> Dictionary:
 		if String(c.get("id", "")) == card_id:
 			return c
 	return {}
-

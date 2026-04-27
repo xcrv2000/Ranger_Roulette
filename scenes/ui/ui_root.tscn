@@ -890,7 +890,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-modulate = Color(0, 0, 0, 0.95)
+modulate = Color(0.59607846, 0.4509804, 0.7254902, 1)
 
 [node name="DetailPanel" type="PanelContainer" parent="BattleRewardPanel/DetailLayer"]
 layout_mode = 1

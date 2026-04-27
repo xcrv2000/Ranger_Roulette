@@ -109,6 +109,20 @@ func _on_reward_add_to_wheel_pressed(card_id: String, wheel_index: int) -> void:
 		return
 	if card_id.is_empty():
 		return
+	var err := _run.get_add_card_to_wheel_error(card_id, wheel_index)
+	if not err.is_empty():
+		if _ui and _ui.has_method("reward_show_hint"):
+			_ui.reward_show_hint(_wheel_add_error_to_text(err))
+		return
 	if _run.add_card_to_wheel(card_id, wheel_index):
 		_ui.hide_battle_rewards()
 		rewards_finished.emit()
+
+func _wheel_add_error_to_text(err: String) -> String:
+	if err == "must_be_last_unlocked_wheel":
+		return "该子弹只能加入最后一个未锁定弹匣。"
+	if err == "wheel_locked":
+		return "该弹匣已锁定。"
+	if err == "no_unlocked_wheel":
+		return "没有可加入的弹匣。"
+	return "无法加入该弹匣。"

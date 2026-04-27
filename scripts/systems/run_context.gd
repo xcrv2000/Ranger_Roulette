@@ -32,7 +32,7 @@ func get_locked_wheels_snapshot() -> Array:
 
 func is_wheel_locked(wheel_index: int) -> bool:
 	if wheel_index < 0 or wheel_index >= locked_wheels.size():
-		return false
+		return true
 	return bool(locked_wheels[wheel_index])
 
 func get_last_unlocked_wheel_index() -> int:
@@ -40,6 +40,23 @@ func get_last_unlocked_wheel_index() -> int:
 		if not is_wheel_locked(i):
 			return i
 	return -1
+
+func get_add_card_to_wheel_error(card_id: String, wheel_index: int) -> String:
+	if card_id.is_empty():
+		return "invalid_card"
+	if wheel_index < 0 or wheel_index >= slot_wheels.size():
+		return "invalid_wheel"
+	if is_wheel_locked(wheel_index):
+		return "wheel_locked"
+	var last_wheel_index := get_last_unlocked_wheel_index()
+	if last_wheel_index < 0:
+		return "no_unlocked_wheel"
+	var db := CardDatabase.load_default()
+	var def := db.get_card(card_id)
+	var constraints: Dictionary = def.get("constraints", {})
+	if String(constraints.get("wheel", "")) == "last" and wheel_index != last_wheel_index:
+		return "must_be_last_unlocked_wheel"
+	return ""
 
 func set_wheel_locked(wheel_index: int, locked: bool) -> void:
 	if wheel_index < 0:
@@ -71,19 +88,7 @@ func heal_to_at_least_half() -> void:
 		set_hp(hp + heal_amount)
 
 func add_card_to_wheel(card_id: String, wheel_index: int) -> bool:
-	if card_id.is_empty():
-		return false
-	if wheel_index < 0 or wheel_index >= slot_wheels.size():
-		return false
-	if is_wheel_locked(wheel_index):
-		return false
-	var last_wheel_index := get_last_unlocked_wheel_index()
-	if last_wheel_index < 0:
-		return false
-	var db := CardDatabase.load_default()
-	var def := db.get_card(card_id)
-	var constraints: Dictionary = def.get("constraints", {})
-	if String(constraints.get("wheel", "")) == "last" and wheel_index != last_wheel_index:
+	if not get_add_card_to_wheel_error(card_id, wheel_index).is_empty():
 		return false
 	var w = slot_wheels[wheel_index]
 	w.append(card_id)
