@@ -1,6 +1,6 @@
-[gd_scene format=3]
+[gd_scene load_steps=2 format=3 uid="uid://ct06mb32orbn0"]
 
-[ext_resource type="Texture2D" path="res://设计方案/pics/drafts/封面布局.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://cimj3pmr0p6cg" path="res://设计方案/pics/drafts/封面布局.png" id="1"]
 
 [node name="TitleScreen" type="Control"]
 layout_mode = 3
@@ -11,6 +11,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="LayoutGuide" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0.25)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -19,21 +20,21 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 texture = ExtResource("1")
-modulate = Color(1, 1, 1, 0.25)
 stretch_mode = 5
 
 [node name="TitleLabel" type="Label" parent="."]
 layout_mode = 1
-anchors_preset = 10
+anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -250.0
-offset_right = 250.0
 offset_top = 60.0
+offset_right = 250.0
 offset_bottom = 140.0
-horizontal_alignment = 1
+grow_horizontal = 2
 theme_override_font_sizes/font_size = 64
 text = "TITLE"
+horizontal_alignment = 1
 
 [node name="CenterButtons" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -46,6 +47,8 @@ offset_left = -160.0
 offset_top = -120.0
 offset_right = 160.0
 offset_bottom = 120.0
+grow_horizontal = 2
+grow_vertical = 2
 alignment = 1
 
 [node name="NewButton" type="Button" parent="CenterButtons"]
@@ -69,7 +72,7 @@ text = "（占位）"
 
 [node name="BottomArt" type="Control" parent="."]
 layout_mode = 1
-anchors_preset = 14
+anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -97,5 +100,7 @@ offset_left = -200.0
 offset_top = -20.0
 offset_right = 200.0
 offset_bottom = 20.0
-horizontal_alignment = 1
+grow_horizontal = 2
+grow_vertical = 2
 text = "底部跑道/角色占位"
+horizontal_alignment = 1

@@ -228,6 +228,8 @@ func render_map(nodes: Array[Dictionary], selected_index: int, current_index: in
 		var name_label: Label = btn.get_node_or_null("Box/Name") as Label
 		if name_label:
 			name_label.text = name_text
+		else:
+			btn.text = name_text
 
 		btn.disabled = global_index > (current_global_index + 1)
 		if current_index >= 0 and i == current_index:
@@ -268,7 +270,7 @@ func _create_map_node_button() -> Button:
 	btn.text = ""
 	btn.focus_mode = Control.FOCUS_NONE
 	btn.disabled = true
-	btn.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	btn.mouse_filter = Control.MOUSE_FILTER_STOP
 	var box: HBoxContainer = HBoxContainer.new()
 	box.name = "Box"
 	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -749,7 +751,7 @@ func _cache_run_ui_nodes() -> void:
 	if not _quick_toggle:
 		_quick_toggle = _run_ui.find_child("QuickToggle", true, false) as Button
 	_slot_bar = _run_ui.get_node("HUD/BottomBar/SlotBar")
-	_leave_button = _run_ui.get_node("LeaveButton")
+	_leave_button = _run_ui.get_node_or_null("LeaveButton") as Button
 	_slot_panels = []
 	_slot_rich_labels = []
 	for c in _slot_bar.get_children():
@@ -774,6 +776,21 @@ func _cache_run_ui_nodes() -> void:
 	_node_buttons = []
 	_nodes_viewport = _run_ui.get_node_or_null("NodePanel/MapArea/MapBar/NodesViewport")
 	_nodes_row = _run_ui.get_node_or_null("NodePanel/MapArea/MapBar/NodesViewport/NodesRow") as HBoxContainer
+	if not _nodes_row:
+		_nodes_viewport = null
+		_nodes_row = _run_ui.get_node_or_null("NodePanel/MapArea/MapBar/Nodes") as HBoxContainer
+	if _nodes_row:
+		for c in _nodes_row.get_children():
+			if c is Button:
+				_node_buttons.append(c)
+		for btn in _node_buttons:
+			var b := btn
+			b.pressed.connect(func() -> void:
+				var idx := int(b.get_meta("map_index", -1))
+				if idx < 0:
+					return
+				select_index_pressed.emit(idx)
+			)
 
 	_stage_label = _run_ui.get_node("NodePanel/StageArea/Box/StageLabel")
 
@@ -816,22 +833,17 @@ func _cache_run_ui_nodes() -> void:
 	_reward_slot_row = _run_ui.get_node("BattleRewardPanel/DetailLayer/DetailPanel/Box/SlotRow")
 	_reward_slot_buttons = []
 
-	_shop_panel = _run_ui.get_node("ShopPanel")
-	_shop_hint_label = _run_ui.get_node("ShopPanel/Box/HintLabel")
-	_shop_card_buttons = [
-		_run_ui.get_node("ShopPanel/Box/CardRow/Item0/Card0"),
-		_run_ui.get_node("ShopPanel/Box/CardRow/Item1/Card1"),
-		_run_ui.get_node("ShopPanel/Box/CardRow/Item2/Card2"),
-		_run_ui.get_node("ShopPanel/Box/CardRow/Item3/Card3"),
-		_run_ui.get_node("ShopPanel/Box/CardRow/Item4/Card4"),
-	]
-	_shop_price_labels = [
-		_run_ui.get_node("ShopPanel/Box/CardRow/Item0/Price0"),
-		_run_ui.get_node("ShopPanel/Box/CardRow/Item1/Price1"),
-		_run_ui.get_node("ShopPanel/Box/CardRow/Item2/Price2"),
-		_run_ui.get_node("ShopPanel/Box/CardRow/Item3/Price3"),
-		_run_ui.get_node("ShopPanel/Box/CardRow/Item4/Price4"),
-	]
+	_shop_panel = _run_ui.get_node_or_null("ShopPanel") as Control
+	_shop_hint_label = _run_ui.get_node_or_null("ShopPanel/Box/HintLabel") as Label
+	_shop_card_buttons = []
+	_shop_price_labels = []
+	for i in range(5):
+		var btn := _run_ui.get_node_or_null("ShopPanel/Box/CardRow/Item%d/Card%d" % [i, i]) as Button
+		if btn:
+			_shop_card_buttons.append(btn)
+		var price_label := _run_ui.get_node_or_null("ShopPanel/Box/CardRow/Item%d/Price%d" % [i, i]) as Label
+		if price_label:
+			_shop_price_labels.append(price_label)
 
 func _wire_run_ui_signals() -> void:
 	_content_primary.pressed.connect(func() -> void:

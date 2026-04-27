@@ -694,3 +694,133 @@ text = "加入轮2"
 [node name="Slot2" type="Button" parent="BattleRewardPanel/DetailLayer/DetailPanel/Box/SlotRow"]
 layout_mode = 2
 text = "加入轮3"
+
+[node name="LeaveButton" type="Button" parent="."]
+visible = false
+layout_mode = 1
+top_level = true
+z_as_relative = false
+z_index = 60
+anchors_preset = 0
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -140.0
+offset_top = 16.0
+offset_right = -24.0
+offset_bottom = 56.0
+text = "离开"
+
+[node name="ShopPanel" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+top_level = true
+z_as_relative = false
+z_index = 40
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -340.0
+offset_top = -260.0
+offset_right = 340.0
+offset_bottom = 260.0
+
+[node name="Box" type="VBoxContainer" parent="ShopPanel"]
+layout_mode = 2
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="ShopPanel/Box"]
+layout_mode = 2
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 32
+text = "商店"
+
+[node name="HintLabel" type="Label" parent="ShopPanel/Box"]
+layout_mode = 2
+horizontal_alignment = 1
+text = ""
+
+[node name="CardRow" type="HBoxContainer" parent="ShopPanel/Box"]
+layout_mode = 2
+alignment = 1
+
+[node name="Item0" type="VBoxContainer" parent="ShopPanel/Box/CardRow"]
+layout_mode = 2
+alignment = 1
+
+[node name="Card0" type="Button" parent="ShopPanel/Box/CardRow/Item0"]
+layout_mode = 2
+custom_minimum_size = Vector2(160, 120)
+icon = ExtResource("2")
+expand_icon = true
+text = "卡1"
+
+[node name="Price0" type="Label" parent="ShopPanel/Box/CardRow/Item0"]
+layout_mode = 2
+horizontal_alignment = 1
+text = "$ 0"
+
+[node name="Item1" type="VBoxContainer" parent="ShopPanel/Box/CardRow"]
+layout_mode = 2
+alignment = 1
+
+[node name="Card1" type="Button" parent="ShopPanel/Box/CardRow/Item1"]
+layout_mode = 2
+custom_minimum_size = Vector2(160, 120)
+icon = ExtResource("2")
+expand_icon = true
+text = "卡2"
+
+[node name="Price1" type="Label" parent="ShopPanel/Box/CardRow/Item1"]
+layout_mode = 2
+horizontal_alignment = 1
+text = "$ 0"
+
+[node name="Item2" type="VBoxContainer" parent="ShopPanel/Box/CardRow"]
+layout_mode = 2
+alignment = 1
+
+[node name="Card2" type="Button" parent="ShopPanel/Box/CardRow/Item2"]
+layout_mode = 2
+custom_minimum_size = Vector2(160, 120)
+icon = ExtResource("2")
+expand_icon = true
+text = "卡3"
+
+[node name="Price2" type="Label" parent="ShopPanel/Box/CardRow/Item2"]
+layout_mode = 2
+horizontal_alignment = 1
+text = "$ 0"
+
+[node name="Item3" type="VBoxContainer" parent="ShopPanel/Box/CardRow"]
+layout_mode = 2
+alignment = 1
+
+[node name="Card3" type="Button" parent="ShopPanel/Box/CardRow/Item3"]
+layout_mode = 2
+custom_minimum_size = Vector2(160, 120)
+icon = ExtResource("2")
+expand_icon = true
+text = "卡4"
+
+[node name="Price3" type="Label" parent="ShopPanel/Box/CardRow/Item3"]
+layout_mode = 2
+horizontal_alignment = 1
+text = "$ 0"
+
+[node name="Item4" type="VBoxContainer" parent="ShopPanel/Box/CardRow"]
+layout_mode = 2
+alignment = 1
+
+[node name="Card4" type="Button" parent="ShopPanel/Box/CardRow/Item4"]
+layout_mode = 2
+custom_minimum_size = Vector2(160, 120)
+icon = ExtResource("2")
+expand_icon = true
+text = "卡5"
+
+[node name="Price4" type="Label" parent="ShopPanel/Box/CardRow/Item4"]
+layout_mode = 2
+horizontal_alignment = 1
+text = "$ 0"
